@@ -6,7 +6,7 @@ window.SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 let finalTranscript = "";
 let recognition = new window.SpeechRecognition();
-//recognition.lang = "en-US";
+recognition.lang = "en-US";
 recognition.lang = "th-TH";
 recognition.interimResults = true;
 recognition.maxAlternatives = 10;
@@ -14,8 +14,8 @@ recognition.continuous = true;
 export class Speech extends Component {
   state = { pressed: false, res: "" };
   btnPressed = () => {
-    this.setState({ pressed: !this.state.pressed });
-    if (window.hasOwnProperty("webkitSpeechRecognition")) {
+    this.setState({ pressed: !this.state.pressed },()=>{
+    if (this.state.pressed && window.hasOwnProperty("webkitSpeechRecognition")) {
       recognition.onresult = event => {
         let interimTranscript = "";
         for (
@@ -42,10 +42,10 @@ export class Speech extends Component {
       };
       recognition.start();
     }
-    /*else{
+    else{
       recognition.stop();
-      alert("Stop recording")
-    }*/
+    }
+  });
   };
   render() {
     console.log(this.state.res);
@@ -53,7 +53,7 @@ export class Speech extends Component {
     return (
       <div>
         <Button
-          content={!this.state.pressed ? "Start Record" : "Recording"}
+          content={!this.state.pressed ? "Start Recording" : "Stop Recording"}
           icon="microphone"
           color={!this.state.pressed ? "teal" : "red"}
           labelPosition="left"
