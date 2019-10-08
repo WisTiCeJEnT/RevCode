@@ -1,10 +1,10 @@
 import React from "react";
 import { Container, Header, Menu, Icon } from "semantic-ui-react";
 import Speech from "./Speech"
-
+import Auth from "./Auth"
 const App = () => (
   <div>
-    <Menu fixed="top" inverted>
+    {/* <Menu fixed="top" inverted>
       <Container>
         <Menu.Item as="a" header>
           <Icon size="large" name="microphone" color="red" />
@@ -16,7 +16,9 @@ const App = () => (
     <Container text style={{ marginTop: "7em" }} textAlign="left">
       <Header as="h1">Speech to Text</Header>
       <Speech />
-    </Container>
+    </Container> */}
+    <Auth />
+    
   </div>
 );
 
