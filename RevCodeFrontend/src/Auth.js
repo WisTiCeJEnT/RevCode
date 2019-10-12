@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+
 import {
   Button,
   Form,
@@ -9,7 +9,9 @@ import {
   Segment
 } from "semantic-ui-react";
 import firebase from "firebase/app";
-//import { auth } from 'firebase/app';
+require('firebase/auth')
+
+
 
 //const API_KEY = process.env.REACT_APP_API_KEY;
 //console.log(API_KEY);
@@ -20,6 +22,7 @@ export class Auth extends Component {
       username: "",
       password: "",
       error: "",
+      currentUser: "",
       loginData: {}
     };
 
@@ -30,12 +33,9 @@ export class Auth extends Component {
 
     var config = {
       apiKey: process.env.REACT_APP_API_KEY,
-      authDomain: "authfirebase-17e0d.firebaseapp.com",
-      databaseURL: "https://authfirebase-17e0d.firebaseio.com",
-      projectId: "authfirebase-17e0d",
-      storageBucket: "authfirebase-17e0d.appspot.com",
-      messagingSenderId: "57933939977",
-      appId: "1:57933939977:web:e70901c703d64571"
+      authDomain: "https://revcode-83ac0.firebaseapp.com/",
+      databaseURL: "https://revcode-83ac0.firebaseio.com/",
+      storageBucket: "projectId.appspot.com",
     };
 
     firebase.initializeApp(config);
@@ -47,18 +47,20 @@ export class Auth extends Component {
 
   handleSubmit(evt) {
     evt.preventDefault();
-    axios
-      .post("https://ku-eiqs-backend.herokuapp.com/login", this.state)
-      .then(res => {
-        if (!res.data.authentication) {
-          return this.setState({ error: "Username or password is incorrect" });
-        }
-        this.setState({ loginData: res.data });
-        this.props.loginAdd(this.state.loginData);
-        //console.log(res);
-        //console.log(this.state);
+    const email = this.state.username;
+    const password = this.state.password;
+    firebase.auth().signInWithEmailAndPassword(email,password)
+      .then(response => {
+        // this.setState({
+        //   currentUser: response.user
+        // });
+        console.log('#',response.user.uid)
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message
+        });
       });
-    //console.log(this.state);
 
     if (!this.state.username) {
       return this.setState({ error: "Username is required" });
@@ -104,7 +106,7 @@ export class Auth extends Component {
                 header={this.state.error}
               />
             )}
-            
+
             <Segment stacked>
               <Form.Input
                 fluid
