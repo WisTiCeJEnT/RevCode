@@ -6,12 +6,13 @@ import {
   Grid,
   Header,
   Message,
-  Segment
+  Segment,
+  Container,
+  Divider
 } from "semantic-ui-react";
+import "./../Style/Login.css";
 import firebase from "firebase/app";
-require('firebase/auth')
-
-
+require("firebase/auth");
 
 //const API_KEY = process.env.REACT_APP_API_KEY;
 //console.log(API_KEY);
@@ -35,7 +36,7 @@ export class Auth extends Component {
       apiKey: process.env.REACT_APP_API_KEY,
       authDomain: "https://revcode-83ac0.firebaseapp.com/",
       databaseURL: "https://revcode-83ac0.firebaseio.com/",
-      storageBucket: "projectId.appspot.com",
+      storageBucket: "projectId.appspot.com"
     };
 
     firebase.initializeApp(config);
@@ -49,12 +50,14 @@ export class Auth extends Component {
     evt.preventDefault();
     const email = this.state.username;
     const password = this.state.password;
-    firebase.auth().signInWithEmailAndPassword(email,password)
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
       .then(response => {
         // this.setState({
         //   currentUser: response.user
         // });
-        console.log('#',response.user.uid)
+        console.log("#", response.user.uid);
       })
       .catch(error => {
         this.setState({
@@ -87,18 +90,18 @@ export class Auth extends Component {
   render() {
     console.log(this.state);
     return (
-      <Grid
-        textAlign="center"
-        style={{ height: "100vh" }}
-        verticalAlign="middle"
-      >
-        <Grid.Column style={{ maxWidth: 450 }}>
-          <Message>
-            <Header as="h3" textAlign="center">
-              Log-in to your account
-            </Header>
-          </Message>
-          <Form size="large" error onSubmit={this.handleSubmit}>
+      <div className="area">
+        <Container className="box" style={{ width: 400 }}>
+          <Header as="h2" icon textAlign="center">
+            <Header.Content style={{ color: "white" }}>Sign In</Header.Content>
+          </Header>
+          <Divider />
+          <Form
+            inverted
+            style={{ paddingTop: 20 }}
+            error
+            onSubmit={this.handleSubmit}
+          >
             {this.state.error && (
               <Message
                 onClick={this.dismissError}
@@ -106,34 +109,53 @@ export class Auth extends Component {
                 header={this.state.error}
               />
             )}
-
-            <Segment stacked>
-              <Form.Input
-                fluid
-                icon="user"
-                iconPosition="left"
-                placeholder="E-mail address"
-                value={this.state.username}
-                onChange={this.handleUserChange}
-              />
-              <Form.Input
-                fluid
-                icon="lock"
-                iconPosition="left"
-                placeholder="Password"
-                type="password"
-                value={this.state.password}
-                onChange={this.handlePassChange}
-              />
-
-              <Button color="red" fluid size="large" onClick={this.login}>
-                Login
-              </Button>
-            </Segment>
+            <Form.Input
+              icon="user"
+              iconPosition="left"
+              label="Username"
+              placeholder="Username"
+              value={this.state.username}
+              onChange={this.handleUserChange}
+            />
+            <Form.Input
+              icon="lock"
+              iconPosition="left"
+              label="Password"
+              type="password"
+              placeholder="Password"
+              value={this.state.password}
+              onChange={this.handlePassChange}
+            />
+            <Grid>
+              <Grid.Column textAlign="center">
+                <Button
+                  type="submit"
+                  content="Login"
+                  basic
+                  inverted
+                  color="teal"
+                  size="large"
+                  style={{ marginTop: "1em" }}
+                />
+              </Grid.Column>
+            </Grid>
           </Form>
-          
-        </Grid.Column>
-      </Grid>
+        </Container>
+
+        <ul class="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
     );
   }
 }
