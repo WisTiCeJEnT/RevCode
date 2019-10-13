@@ -1,24 +1,11 @@
 import React from "react";
-import { Container, Header, Menu, Icon } from "semantic-ui-react";
-import Speech from "./Speech"
-import Auth from "./Auth"
+//import { Container, Header, Menu, Icon } from "semantic-ui-react";
+//import Speech from "./Components/Speech";
+//import Auth from "./Components/Auth"
+import HomepageLayout from "./Components/HomepageLayout"
 const App = () => (
   <div>
-    {/* <Menu fixed="top" inverted>
-      <Container>
-        <Menu.Item as="a" header>
-          <Icon size="large" name="microphone" color="red" />
-          Speech Recognition
-        </Menu.Item>
-      </Container>
-    </Menu>
-
-    <Container text style={{ marginTop: "7em" }} textAlign="left">
-      <Header as="h1">Speech to Text</Header>
-      <Speech />
-    </Container> */}
-    <Auth />
-    
+    <HomepageLayout />
   </div>
 );
 

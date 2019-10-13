@@ -131,9 +131,7 @@ export class Auth extends Component {
               </Button>
             </Segment>
           </Form>
-          <Message>
-            New to us? <a href="#">Sign Up</a>
-          </Message>
+          
         </Grid.Column>
       </Grid>
     );
