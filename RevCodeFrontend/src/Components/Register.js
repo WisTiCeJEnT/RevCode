@@ -6,7 +6,6 @@ import {
   Grid,
   Header,
   Message,
-  Segment,
   Container,
   Divider
 } from "semantic-ui-react";
@@ -14,20 +13,22 @@ import "./../Style/Login.css";
 import firebase from "firebase/app";
 require("firebase/auth");
 
-
-export class Auth extends Component {
+export class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
+      email: "",
       password: "",
+      cpassword: "",
       error: "",
       currentUser: "",
       loginData: {}
     };
-
-    this.handlePassChange = this.handlePassChange.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
+    this.handlePassChange = this.handlePassChange.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handleCPassChange = this.handleCPassChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.dismissError = this.dismissError.bind(this);
 
@@ -47,30 +48,39 @@ export class Auth extends Component {
 
   handleSubmit(evt) {
     evt.preventDefault();
-    const email = this.state.username;
+    if (!this.state.username) {
+        return this.setState({ error: "Username is required" });
+      }
+  
+      if (!this.state.email) {
+        return this.setState({ error: "Email is required" });
+      }
+  
+      if (!this.state.password) {
+        return this.setState({ error: "Password is required" });
+      }
+      if (!this.state.cpassword) {
+        return this.setState({ error: "Confirm Password is required" });
+      }
+      if(this.state.password !== this.state.cpassword){
+        return this.setState({ error: "Your password and confirm password don't match" });  
+      }
+    const email = this.state.email;
     const password = this.state.password;
     firebase
       .auth()
-      .signInWithEmailAndPassword(email, password)
+      .createUserWithEmailAndPassword(email, password)
       .then(response => {
         // this.setState({
         //   currentUser: response.user
         // });
-        console.log("#", response.user.uid);
+        console.log("#", response);
       })
       .catch(error => {
         this.setState({
           error: error.message
         });
       });
-
-    if (!this.state.username) {
-      return this.setState({ error: "Username is required" });
-    }
-
-    if (!this.state.password) {
-      return this.setState({ error: "Password is required" });
-    }
 
     return this.setState({ error: "" });
   }
@@ -81,9 +91,21 @@ export class Auth extends Component {
     });
   }
 
+  handleEmailChange(evt) {
+    this.setState({
+      email: evt.target.value
+    });
+  }
+
   handlePassChange(evt) {
     this.setState({
       password: evt.target.value
+    });
+  }
+
+  handleCPassChange(evt) {
+    this.setState({
+      cpassword: evt.target.value
     });
   }
   render() {
@@ -92,7 +114,7 @@ export class Auth extends Component {
       <div className="area">
         <Container className="box" style={{ width: 400 }}>
           <Header as="h2" icon textAlign="center">
-            <Header.Content style={{ color: "white" }}>Sign In</Header.Content>
+            <Header.Content style={{ color: "white" }}>Register</Header.Content>
           </Header>
           <Divider />
           <Form
@@ -108,13 +130,25 @@ export class Auth extends Component {
                 header={this.state.error}
               />
             )}
+
             <Form.Input
               icon="user"
               iconPosition="left"
+              fluid
+              id="form-subcomponent-shorthand-input-first-name"
               label="Username"
               placeholder="Username"
               value={this.state.username}
               onChange={this.handleUserChange}
+            />
+
+            <Form.Input
+              icon="mail"
+              iconPosition="left"
+              label="Email"
+              placeholder="Email"
+              value={this.state.email}
+              onChange={this.handleEmailChange}
             />
             <Form.Input
               icon="lock"
@@ -125,11 +159,20 @@ export class Auth extends Component {
               value={this.state.password}
               onChange={this.handlePassChange}
             />
+            <Form.Input
+              icon="lock"
+              iconPosition="left"
+              label="Confirm Password"
+              type="password"
+              placeholder="Confirm Password"
+              value={this.state.cpassword}
+              onChange={this.handleCPassChange}
+            />
             <Grid>
               <Grid.Column textAlign="center">
                 <Button
                   type="submit"
-                  content="Login"
+                  content="Sign Up"
                   basic
                   inverted
                   color="teal"
@@ -159,4 +202,4 @@ export class Auth extends Component {
   }
 }
 
-export default Auth;
+export default Register;

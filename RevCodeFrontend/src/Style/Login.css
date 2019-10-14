@@ -1,13 +1,11 @@
-@import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
 
 *{
     margin: 0px;
     padding: 0px;
 }
 
-body{
-    font-family: 'Exo', sans-serif;
-}
+
 
 
 .context {
@@ -160,7 +158,8 @@ padding: 40px;
 background: rgba(0,0,0,.8);
 box-sizing: border-box;
 box-shadow: 0 15px 25px rgba(0,0,0,.5);
-border-radius: 10px;}
+border-radius: 10px;
+z-index: 1000;}
 
 @keyframes App-logo-spin {
 from {
