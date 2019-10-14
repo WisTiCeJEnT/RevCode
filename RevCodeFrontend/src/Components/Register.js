@@ -10,6 +10,7 @@ import {
   Divider
 } from "semantic-ui-react";
 import "./../Style/Login.css";
+import axios from "axios";
 import firebase from "firebase/app";
 require("firebase/auth");
 
@@ -49,22 +50,24 @@ export class Register extends Component {
   handleSubmit(evt) {
     evt.preventDefault();
     if (!this.state.username) {
-        return this.setState({ error: "Username is required" });
-      }
-  
-      if (!this.state.email) {
-        return this.setState({ error: "Email is required" });
-      }
-  
-      if (!this.state.password) {
-        return this.setState({ error: "Password is required" });
-      }
-      if (!this.state.cpassword) {
-        return this.setState({ error: "Confirm Password is required" });
-      }
-      if(this.state.password !== this.state.cpassword){
-        return this.setState({ error: "Your password and confirm password don't match" });  
-      }
+      return this.setState({ error: "Username is required" });
+    }
+
+    if (!this.state.email) {
+      return this.setState({ error: "Email is required" });
+    }
+
+    if (!this.state.password) {
+      return this.setState({ error: "Password is required" });
+    }
+    if (!this.state.cpassword) {
+      return this.setState({ error: "Confirm Password is required" });
+    }
+    if (this.state.password !== this.state.cpassword) {
+      return this.setState({
+        error: "Your password and confirm password don't match"
+      });
+    }
     const email = this.state.email;
     const password = this.state.password;
     firebase
@@ -75,6 +78,20 @@ export class Register extends Component {
         //   currentUser: response.user
         // });
         console.log("#", response);
+        axios
+          .post("https://revcode.herokuapp.com/adduser", {
+            uid: response.user.uid,
+            name: this.state.username
+          })
+          .then(res => {
+            console.log(res);
+            alert("Successfully Registered");
+          })
+          .catch(err => {
+            this.setState({
+              error: err.message
+            });
+          });
       })
       .catch(error => {
         this.setState({
