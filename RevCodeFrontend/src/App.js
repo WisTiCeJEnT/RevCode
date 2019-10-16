@@ -3,12 +3,14 @@ import React from "react";
 //import Speech from "./Components/Speech";
 //import Auth from "./Components/Auth"
 import Register from "./Components/Register"
+//import RevCode from "./Components/RevCode"
 //import HomepageLayout from "./Components/HomepageLayout"
 const App = () => (
   <div>
     {/* <HomepageLayout /> */}
-    {/* <Auth /> */}
-    <Register />
+     {/* <Auth />  */}
+    <Register /> 
+    {/* <RevCode /> */}
   </div>
 );
 
