@@ -6,12 +6,12 @@ import {
   Grid,
   Header,
   Message,
-  Segment,
   Container,
   Divider
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import firebase from "firebase/app";
+
 require("firebase/auth");
 
 
@@ -45,25 +45,8 @@ export class Auth extends Component {
     this.setState({ error: "" });
   }
 
-  handleSubmit(evt) {
+  handleSubmit = async (evt) => {
     evt.preventDefault();
-    const email = this.state.username;
-    const password = this.state.password;
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(response => {
-        // this.setState({
-        //   currentUser: response.user
-        // });
-        console.log("#", response.user.uid);
-      })
-      .catch(error => {
-        this.setState({
-          error: error.message
-        });
-      });
-
     if (!this.state.username) {
       return this.setState({ error: "Username is required" });
     }
@@ -71,6 +54,32 @@ export class Auth extends Component {
     if (!this.state.password) {
       return this.setState({ error: "Password is required" });
     }
+    const email = this.state.username;
+    const password = this.state.password;
+    try{
+    await firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(response => {
+        // this.setState({
+        //   currentUser: response.user
+        // });
+        console.log("#", response.user.uid);
+        alert("Successfully Logged In")
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message
+        });
+      });
+    }
+    catch(error)  {
+      this.setState({
+        error: error.message
+      });
+    };
+
+    
 
     return this.setState({ error: "" });
   }

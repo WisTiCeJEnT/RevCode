@@ -47,7 +47,7 @@ export class Register extends Component {
     this.setState({ error: "" });
   }
 
-  handleSubmit(evt) {
+  handleSubmit = async (evt) => {
     evt.preventDefault();
     if (!this.state.username) {
       return this.setState({ error: "Username is required" });
@@ -70,7 +70,9 @@ export class Register extends Component {
     }
     const email = this.state.email;
     const password = this.state.password;
-    firebase
+
+    try{
+    await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(response => {
@@ -98,6 +100,12 @@ export class Register extends Component {
           error: error.message
         });
       });
+    }
+    catch(error)  {
+      this.setState({
+        error: error.message
+      });
+    };
 
     return this.setState({ error: "" });
   }
