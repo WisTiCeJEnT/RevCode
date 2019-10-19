@@ -39,8 +39,9 @@ export class Register extends Component {
       databaseURL: "https://revcode-83ac0.firebaseio.com/",
       storageBucket: "projectId.appspot.com"
     };
-
+    if (!firebase.apps.length) {
     firebase.initializeApp(config);
+    }
   }
 
   dismissError() {

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Button,
   Container,
@@ -36,19 +36,18 @@ const HomepageHeading = ({ mobile }) => (
     />
     <Header
       as="h3"
-      
       inverted
       style={{
         fontSize: mobile ? "1.5em" : "1.7em",
         fontWeight: "normal",
         marginTop: mobile ? "0.5em" : "1.5em"
       }}
-> 
-<Header.Content>
-<b>{"<>"}</b> Speak your code <b>{"</>"}</b>
-</Header.Content>
+    >
+      <Header.Content>
+        <b>{"<>"}</b> Speak your code <b>{"</>"}</b>
+      </Header.Content>
     </Header>
-    
+
     <Button
       primary
       size="huge"
@@ -104,21 +103,18 @@ class DesktopContainer extends Component {
                 <Menu.Item as="a">###</Menu.Item>
                 <Menu.Item as="a">###</Menu.Item>
                 <Menu.Item position="right">
-                <Link to="/login">
-                  <Button as="a" inverted={!fixed}>
-                    Log in
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button
-                    as="a"
-                    inverted={!fixed}
-                    primary={fixed}
-                    style={{ marginLeft: "0.5em" }}
-                  >
-                    Sign Up
-                  </Button>
-                </Link>
+                  <Link to="/login">
+                    <Button inverted={!fixed}>Log In</Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button
+                      inverted={!fixed}
+                      primary={fixed}
+                      style={{ marginLeft: "0.5em" }}
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
                 </Menu.Item>
               </Container>
             </Menu>
@@ -223,10 +219,9 @@ const HomepageLayout = () => (
     <Segment style={{ padding: "8em 0em" }} vertical>
       <Grid container stackable verticalAlign="middle">
         ###Content###
-          
       </Grid>
     </Segment>
-  
+
     <Segment inverted vertical style={{ padding: "5em 0em" }}>
       <Container>
         <Grid divided inverted stackable>
@@ -251,11 +246,9 @@ const HomepageLayout = () => (
             </Grid.Column>
             <Grid.Column width={7}>
               <Header as="h4" inverted>
-              ######
+                ######
               </Header>
-              <p>
-              ########################
-              </p>
+              <p>########################</p>
             </Grid.Column>
           </Grid.Row>
         </Grid>

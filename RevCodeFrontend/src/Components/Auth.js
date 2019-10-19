@@ -14,7 +14,6 @@ import firebase from "firebase/app";
 
 require("firebase/auth");
 
-
 export class Auth extends Component {
   constructor(props) {
     super(props);
@@ -37,15 +36,16 @@ export class Auth extends Component {
       databaseURL: "https://revcode-83ac0.firebaseio.com/",
       storageBucket: "projectId.appspot.com"
     };
-
-    firebase.initializeApp(config);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(config);
+    }
   }
 
   dismissError() {
     this.setState({ error: "" });
   }
 
-  handleSubmit = async (evt) => {
+  handleSubmit = async evt => {
     evt.preventDefault();
     if (!this.state.username) {
       return this.setState({ error: "Username is required" });
@@ -56,33 +56,30 @@ export class Auth extends Component {
     }
     const email = this.state.username;
     const password = this.state.password;
-    try{
-    await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(response => {
-        // this.setState({
-        //   currentUser: response.user
-        // });
-        console.log("#", response.user.uid);
-        alert("Successfully Logged In")
-      })
-      .catch(error => {
-        this.setState({
-          error: error.message
+    try {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(response => {
+          // this.setState({
+          //   currentUser: response.user
+          // });
+          console.log("#", response.user.uid);
+          alert("Successfully Logged In");
+        })
+        .catch(error => {
+          this.setState({
+            error: error.message
+          });
         });
-      });
-    }
-    catch(error)  {
+    } catch (error) {
       this.setState({
         error: error.message
       });
-    };
-
-    
+    }
 
     return this.setState({ error: "" });
-  }
+  };
 
   handleUserChange(evt) {
     this.setState({
