@@ -10,9 +10,7 @@ import {
   Divider
 } from "semantic-ui-react";
 import "./../Style/Login.css";
-import firebase from "firebase/app";
-
-require("firebase/auth");
+import firebase from './../FirebaseAPI'
 
 export class Auth extends Component {
   constructor(props) {
@@ -30,15 +28,7 @@ export class Auth extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.dismissError = this.dismissError.bind(this);
 
-    var config = {
-      apiKey: process.env.REACT_APP_API_KEY,
-      authDomain: "https://revcode-83ac0.firebaseapp.com/",
-      databaseURL: "https://revcode-83ac0.firebaseio.com/",
-      storageBucket: "projectId.appspot.com"
-    };
-    if (!firebase.apps.length) {
-      firebase.initializeApp(config);
-    }
+    
   }
 
   dismissError() {
@@ -61,11 +51,10 @@ export class Auth extends Component {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(response => {
-          // this.setState({
-          //   currentUser: response.user
-          // });
           console.log("#", response.user.uid);
           alert("Successfully Logged In");
+          return this.props.history.push("/main")
+          
         })
         .catch(error => {
           this.setState({

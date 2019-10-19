@@ -11,8 +11,7 @@ import {
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import axios from "axios";
-import firebase from "firebase/app";
-require("firebase/auth");
+import firebase from "./../FirebaseAPI";
 
 export class Register extends Component {
   constructor(props) {
@@ -32,23 +31,13 @@ export class Register extends Component {
     this.handleCPassChange = this.handleCPassChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.dismissError = this.dismissError.bind(this);
-
-    var config = {
-      apiKey: process.env.REACT_APP_API_KEY,
-      authDomain: "https://revcode-83ac0.firebaseapp.com/",
-      databaseURL: "https://revcode-83ac0.firebaseio.com/",
-      storageBucket: "projectId.appspot.com"
-    };
-    if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-    }
   }
 
   dismissError() {
     this.setState({ error: "" });
   }
 
-  handleSubmit = async (evt) => {
+  handleSubmit = async evt => {
     evt.preventDefault();
     if (!this.state.username) {
       return this.setState({ error: "Username is required" });
@@ -72,44 +61,40 @@ export class Register extends Component {
     const email = this.state.email;
     const password = this.state.password;
 
-    try{
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(response => {
-        // this.setState({
-        //   currentUser: response.user
-        // });
-        console.log("#", response);
-        axios
-          .post("https://revcode.herokuapp.com/adduser", {
-            uid: response.user.uid,
-            name: this.state.username
-          })
-          .then(res => {
-            console.log(res);
-            alert("Successfully Registered");
-          })
-          .catch(err => {
-            this.setState({
-              error: err.message
+    try {
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(async response => {
+          console.log("#", response);
+          await axios
+            .post("https://revcode.herokuapp.com/adduser", {
+              uid: response.user.uid,
+              name: this.state.username
+            })
+            .then(res => {
+              console.log(res);
+              alert("Successfully Registered");
+            })
+            .catch(err => {
+              this.setState({
+                error: err.message
+              });
             });
+        })
+        .catch(error => {
+          this.setState({
+            error: error.message
           });
-      })
-      .catch(error => {
-        this.setState({
-          error: error.message
         });
-      });
-    }
-    catch(error)  {
+    } catch (error) {
       this.setState({
         error: error.message
       });
-    };
+    }
 
     return this.setState({ error: "" });
-  }
+  };
 
   handleUserChange(evt) {
     this.setState({
