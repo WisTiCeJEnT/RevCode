@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-
+import React, { useCallback, useContext } from "react";
+import { withRouter, Redirect } from "react-router";
 import {
   Button,
   Form,
@@ -10,9 +10,10 @@ import {
   Divider
 } from "semantic-ui-react";
 import "./../Style/Login.css";
-import firebase from './../FirebaseAPI'
+import firebase from '../FirebaseAPI'
+import { AuthContext } from "./.Auth";
 
-export class Auth extends Component {
+export class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -154,4 +155,4 @@ export class Auth extends Component {
   }
 }
 
-export default Auth;
+export default Login;
