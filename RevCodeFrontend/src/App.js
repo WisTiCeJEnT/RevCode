@@ -8,15 +8,18 @@ import RevCode from "./Components/RevCode";
 import HomepageLayout from "./Components/HomepageLayout";
 //import withAuthProtection from "./withAuthProtection";
 import firebase from "./FirebaseAPI";
+import { AuthProvider } from "./Auth";
+import PrivateRoute from "./PrivateRoute";
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
         <div>
-          <PrivateRoute exact path="/" component={RevCode} />
+          <Route exact path="/" component={HomepageLayout} />
+          <PrivateRoute exact path="/main" component={RevCode} />
           <Route exact path="/login" component={Login} />
-          <Route exact path="/signup" component={Register} />
+          <Route exact path="/register" component={Register} />
         </div>
       </Router>
     </AuthProvider>

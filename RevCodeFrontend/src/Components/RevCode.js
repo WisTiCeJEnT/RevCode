@@ -11,7 +11,7 @@ import {
   Segment,
   Sidebar
 } from "semantic-ui-react";
-
+import firebase from "../FirebaseAPI";
 const VerticalSidebar = ({ animation, direction, visible }) => (
   <Sidebar
     as={Menu}
@@ -88,6 +88,7 @@ export class RevCode extends Component {
             </Segment>
             <Segment basic>
               <Header as="h3">Application Content</Header>
+              <Button onClick={() => firebase.auth().signOut()}>Sign out</Button>
             </Segment>
           </Sidebar.Pusher>
         </Sidebar.Pushable>

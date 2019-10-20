@@ -10,10 +10,98 @@ import {
   Divider
 } from "semantic-ui-react";
 import "./../Style/Login.css";
-import firebase from '../FirebaseAPI'
-import { AuthContext } from "./.Auth";
+import firebase from "../FirebaseAPI";
+import { AuthContext } from "./../Auth";
 
-export class Login extends Component {
+const Login = ({ history }) => {
+  const handleLogin = useCallback(
+    async event => {
+      event.preventDefault();
+      const { email, password } = event.target.elements;
+      try {
+        await firebase
+          .auth()
+          .signInWithEmailAndPassword(email.value, password.value);
+        history.push("/main");
+      } catch (error) {
+        alert(error);
+      }
+    },
+    [history]
+  );
+
+  const { currentUser } = useContext(AuthContext);
+
+  if (currentUser) {
+    return <Redirect to="/main" />;
+  }
+  return (
+    <div className="area">
+        <Container className="box" style={{ width: 400 }}>
+          <Header as="h2" icon textAlign="center">
+            <Header.Content style={{ color: "white" }}>Sign In</Header.Content>
+          </Header>
+          <Divider />
+          <Form
+            inverted
+            style={{ paddingTop: 20 }}
+            error
+            onSubmit={handleLogin}
+          >
+    
+            <Form.Input
+              icon="user"
+              iconPosition="left"
+              label="Email"
+              placeholder="Email"
+              name="email"
+              type="email"
+            />
+            <Form.Input
+              icon="lock"
+              iconPosition="left"
+              label="Password"
+              type="password"
+              placeholder="Password"
+              name="password"
+              type="password"
+            />
+            <Grid>
+              <Grid.Column textAlign="center">
+                <Button
+                  type="submit"
+                  content="Login"
+                  basic
+                  inverted
+                  color="teal"
+                  size="large"
+                  style={{ marginTop: "1em" }}
+                />
+              </Grid.Column>
+            </Grid>
+          </Form>
+        </Container>
+
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+  );
+};
+
+export default withRouter(Login);
+
+/*export class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -155,4 +243,4 @@ export class Login extends Component {
   }
 }
 
-export default Login;
+export default Login;*/
