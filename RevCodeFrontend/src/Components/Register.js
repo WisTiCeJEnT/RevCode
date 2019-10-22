@@ -10,6 +10,7 @@ import {
   Container,
   Divider,
   GridRow,
+  Progress
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import axios from "axios";
@@ -19,6 +20,7 @@ const zxcvbn = require("zxcvbn");
 
 const Register = ({ history }) => {
   const [Err, setErr] = useState({ error: "" });
+  const [Progess , setProgress] = useState({percent:0,style:""})
   const handleRegister = useCallback(
     async event => {
       event.preventDefault();
@@ -120,10 +122,13 @@ const Register = ({ history }) => {
             type="password"
             onChange={e => {
               const testedResult = zxcvbn(e.target.value);
-              console.log("####", testedResult.score);
+              console.log("####", typeof(testedResult.score));
+              //setProgress({percent:(testedResult.score+1)*20})
             }}
           />
-          
+          <Progress percent={20} color="red" size="tiny" style={{marginBottom:"1em"}}/>
+        
+
           <Form.Input
             icon="lock"
             iconPosition="left"
