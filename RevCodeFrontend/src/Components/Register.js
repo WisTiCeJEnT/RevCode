@@ -19,8 +19,13 @@ import { AuthContext } from "./../Auth";
 const zxcvbn = require("zxcvbn");
 
 const Register = ({ history }) => {
+  const [Display, setDisplay] = useState({ show: false });
   const [Err, setErr] = useState({ error: "" });
-  const [Progess , setProgress] = useState({percent:0,style:""})
+  const [progress, setProgress] = useState({
+    percent: 0,
+    color: "grey",
+    scale: ""
+  });
   const handleRegister = useCallback(
     async event => {
       event.preventDefault();
@@ -57,14 +62,16 @@ const Register = ({ history }) => {
               })
               .then(res => {
                 console.log(res);
+                
                 alert("Successfully Registered");
+
+                history.push("/");
               })
               .catch(err => {
                 setErr({ error: err.message });
                 //alert(err)
               });
             firebase.auth().signOut();
-            history.push("/");
           })
           .catch(err => {
             setErr({ error: err.message });
@@ -121,13 +128,54 @@ const Register = ({ history }) => {
             name="password"
             type="password"
             onChange={e => {
+              setDisplay({ show: true });
               const testedResult = zxcvbn(e.target.value);
-              console.log("####", typeof(testedResult.score));
-              //setProgress({percent:(testedResult.score+1)*20})
+              const score = (testedResult.score + 1) * 20;
+
+              if (score === 20) {
+                setProgress({ percent: score, color: "red", scale: "Weak" });
+              }
+              if (score === 40) {
+                setProgress({ percent: score, color: "yellow", scale: "Fair" });
+              }
+              if (score === 60) {
+                setProgress({ percent: score, color: "blue", scale: "Normal" });
+              }
+              if (score === 80) {
+                setProgress({ percent: score, color: "teal", scale: "Good" });
+              }
+              if (score === 100) {
+                setProgress({
+                  percent: score,
+                  color: "green",
+                  scale: "Strong"
+                });
+              }
+              console.log(progress);
             }}
           />
-          <Progress percent={20} color="red" size="tiny" style={{marginBottom:"1em"}}/>
-        
+
+          {!Display.show ? null : (
+            <Progress
+              percent={progress.percent}
+              color={progress.color}
+              size="tiny"
+              style={{ marginBottom: "1em" }}
+            />
+          )}
+
+          {!Display.show ? null : (
+            <Header
+              as="h5"
+              textAlign="left"
+              color={progress.color}
+              style={{ marginTop: "1em" }}
+            >
+              <Header.Content>
+                <b>Password Strength </b> : <i>{progress.scale}</i>
+              </Header.Content>
+            </Header>
+          )}
 
           <Form.Input
             icon="lock"
@@ -184,205 +232,3 @@ const Register = ({ history }) => {
   );
 };
 export default withRouter(Register);
-
-/*export class Register extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: "",
-      email: "",
-      password: "",
-      cpassword: "",
-      error: "",
-      currentUser: "",
-      loginData: {}
-    };
-    this.handleUserChange = this.handleUserChange.bind(this);
-    this.handlePassChange = this.handlePassChange.bind(this);
-    this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handleCPassChange = this.handleCPassChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.dismissError = this.dismissError.bind(this);
-  }
-
-  dismissError() {
-    this.setState({ error: "" });
-  }
-
-  handleSubmit = async evt => {
-    evt.preventDefault();
-    if (!this.state.username) {
-      return this.setState({ error: "Username is required" });
-    }
-
-    if (!this.state.email) {
-      return this.setState({ error: "Email is required" });
-    }
-
-    if (!this.state.password) {
-      return this.setState({ error: "Password is required" });
-    }
-    if (!this.state.cpassword) {
-      return this.setState({ error: "Confirm Password is required" });
-    }
-    if (this.state.password !== this.state.cpassword) {
-      return this.setState({
-        error: "Your password and confirm password don't match"
-      });
-    }
-    const email = this.state.email;
-    const password = this.state.password;
-
-    try {
-      await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(async response => {
-          console.log("#", response);
-          await axios
-            .post("https://revcode.herokuapp.com/adduser", {
-              uid: response.user.uid,
-              name: this.state.username
-            })
-            .then(res => {
-              console.log(res);
-              alert("Successfully Registered");
-            })
-            .catch(err => {
-              this.setState({
-                error: err.message
-              });
-            });
-        })
-        .catch(error => {
-          this.setState({
-            error: error.message
-          });
-        });
-    } catch (error) {
-      this.setState({
-        error: error.message
-      });
-    }
-
-    return this.setState({ error: "" });
-  };
-
-  handleUserChange(evt) {
-    this.setState({
-      username: evt.target.value
-    });
-  }
-
-  handleEmailChange(evt) {
-    this.setState({
-      email: evt.target.value
-    });
-  }
-
-  handlePassChange(evt) {
-    this.setState({
-      password: evt.target.value
-    });
-  }
-
-  handleCPassChange(evt) {
-    this.setState({
-      cpassword: evt.target.value
-    });
-  }
-  render() {
-    console.log(this.state);
-    return (
-      <div className="area">
-        <Container className="box" style={{ width: 400 }}>
-          <Header as="h2" icon textAlign="center">
-            <Header.Content style={{ color: "white" }}>Register</Header.Content>
-          </Header>
-          <Divider />
-          <Form
-            inverted
-            style={{ paddingTop: 20 }}
-            error
-            onSubmit={this.handleSubmit}
-          >
-            {this.state.error && (
-              <Message
-                onClick={this.dismissError}
-                error
-                header={this.state.error}
-              />
-            )}
-
-            <Form.Input
-              icon="user"
-              iconPosition="left"
-              fluid
-              id="form-subcomponent-shorthand-input-first-name"
-              label="Username"
-              placeholder="Username"
-              value={this.state.username}
-              onChange={this.handleUserChange}
-            />
-
-            <Form.Input
-              icon="mail"
-              iconPosition="left"
-              label="Email"
-              placeholder="Email"
-              value={this.state.email}
-              onChange={this.handleEmailChange}
-            />
-            <Form.Input
-              icon="lock"
-              iconPosition="left"
-              label="Password"
-              type="password"
-              placeholder="Password"
-              value={this.state.password}
-              onChange={this.handlePassChange}
-            />
-            <Form.Input
-              icon="lock"
-              iconPosition="left"
-              label="Confirm Password"
-              type="password"
-              placeholder="Confirm Password"
-              value={this.state.cpassword}
-              onChange={this.handleCPassChange}
-            />
-            <Grid>
-              <Grid.Column textAlign="center">
-                <Button
-                  type="submit"
-                  content="Sign Up"
-                  basic
-                  inverted
-                  color="teal"
-                  size="large"
-                  style={{ marginTop: "1em" }}
-                />
-              </Grid.Column>
-            </Grid>
-          </Form>
-        </Container>
-
-        <ul className="circles">
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ul>
-      </div>
-    );
-  }
-}
-
-export default Register;*/
