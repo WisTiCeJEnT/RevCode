@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { Component ,useContext } from "react";
+import React, { Component, useContext } from "react";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -15,7 +15,7 @@ import {
   Visibility
 } from "semantic-ui-react";
 import { AuthContext } from "./../Auth";
-import { withRouter, Redirect } from "react-router";
+import { Redirect } from "react-router";
 
 const getWidth = () => {
   const isSSR = typeof window === "undefined";
@@ -222,47 +222,48 @@ const HomepageLayout = () => {
   if (currentUser) {
     return <Redirect to="/main" />;
   }
-  
-  return (
-  <ResponsiveContainer>
-    <Segment style={{ padding: "8em 0em" }} vertical>
-      <Grid container stackable verticalAlign="middle">
-        ###Content###
-      </Grid>
-    </Segment>
 
-    <Segment inverted vertical style={{ padding: "5em 0em" }}>
-      <Container>
-        <Grid divided inverted stackable>
-          <Grid.Row>
-            <Grid.Column width={3}>
-              <Header inverted as="h4" content="#####" />
-              <List link inverted>
-                <List.Item as="a">######</List.Item>
-                <List.Item as="a">######</List.Item>
-                <List.Item as="a">######</List.Item>
-                <List.Item as="a">######</List.Item>
-              </List>
-            </Grid.Column>
-            <Grid.Column width={3}>
-              <Header inverted as="h4" content="#####" />
-              <List link inverted>
-                <List.Item as="a">######</List.Item>
-                <List.Item as="a">######</List.Item>
-                <List.Item as="a">######</List.Item>
-                <List.Item as="a">######</List.Item>
-              </List>
-            </Grid.Column>
-            <Grid.Column width={7}>
-              <Header as="h4" inverted>
-                ######
-              </Header>
-              <p>########################</p>
-            </Grid.Column>
-          </Grid.Row>
+  return (
+    <ResponsiveContainer>
+      <Segment style={{ padding: "8em 0em" }} vertical>
+        <Grid container stackable verticalAlign="middle">
+          ###Content###
         </Grid>
-      </Container>
-    </Segment>
-  </ResponsiveContainer>
-);}
+      </Segment>
+
+      <Segment inverted vertical style={{ padding: "5em 0em" }}>
+        <Container>
+          <Grid divided inverted stackable>
+            <Grid.Row>
+              <Grid.Column width={3}>
+                <Header inverted as="h4" content="#####" />
+                <List link inverted>
+                  <List.Item as="a">######</List.Item>
+                  <List.Item as="a">######</List.Item>
+                  <List.Item as="a">######</List.Item>
+                  <List.Item as="a">######</List.Item>
+                </List>
+              </Grid.Column>
+              <Grid.Column width={3}>
+                <Header inverted as="h4" content="#####" />
+                <List link inverted>
+                  <List.Item as="a">######</List.Item>
+                  <List.Item as="a">######</List.Item>
+                  <List.Item as="a">######</List.Item>
+                  <List.Item as="a">######</List.Item>
+                </List>
+              </Grid.Column>
+              <Grid.Column width={7}>
+                <Header as="h4" inverted>
+                  ######
+                </Header>
+                <p>########################</p>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Container>
+      </Segment>
+    </ResponsiveContainer>
+  );
+};
 export default HomepageLayout;

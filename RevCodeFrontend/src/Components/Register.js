@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState , useContext } from "react";
 import { withRouter, Redirect } from "react-router";
+import { Link } from "react-router-dom";
 import {
   Button,
   Form,
@@ -7,7 +8,8 @@ import {
   Header,
   Message,
   Container,
-  Divider
+  Divider,
+  GridRow
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import axios from "axios";
@@ -72,12 +74,17 @@ const Register = ({ history }) => {
     },
     [history]
   );
+  const { currentUser } = useContext(AuthContext);
+
+  if (currentUser) {
+    return <Redirect to="/main" />;
+  }
 
   return (
     <div className="area">
       <Container className="box" style={{ width: 400 }}>
         <Header as="h2" icon textAlign="center">
-          <Header.Content style={{ color: "white" }}>Register</Header.Content>
+          <Header.Content style={{ color: "white" }}>Sign Up</Header.Content>
         </Header>
         <Divider />
         <Form
@@ -126,6 +133,7 @@ const Register = ({ history }) => {
           />
           <Grid>
             <Grid.Column textAlign="center">
+              <Grid.Row>
               <Button
                 type="submit"
                 content="Sign Up"
@@ -135,6 +143,14 @@ const Register = ({ history }) => {
                 size="large"
                 style={{ marginTop: "1em" }}
               />
+              </Grid.Row>
+              <GridRow>
+                <Header as="h5" textAlign="center">
+                  <Header.Content style={{ color: "#909090" , marginTop:"2em" }}>
+                    Already have an account? <Link to="/login"><i>Sign In</i></Link>
+                  </Header.Content>
+                </Header>
+              </GridRow>
             </Grid.Column>
           </Grid>
         </Form>

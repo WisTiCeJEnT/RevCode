@@ -6,8 +6,6 @@ import Login from "./Components/Login";
 import Register from "./Components/Register";
 import RevCode from "./Components/RevCode";
 import HomepageLayout from "./Components/HomepageLayout";
-//import withAuthProtection from "./withAuthProtection";
-import firebase from "./FirebaseAPI";
 import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
 
