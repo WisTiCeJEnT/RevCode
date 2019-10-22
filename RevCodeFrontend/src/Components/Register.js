@@ -1,4 +1,4 @@
-import React, { useCallback, useState , useContext } from "react";
+import React, { useCallback, useState, useContext } from "react";
 import { withRouter, Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -9,12 +9,13 @@ import {
   Message,
   Container,
   Divider,
-  GridRow
+  GridRow,
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import axios from "axios";
 import firebase from "../FirebaseAPI";
 import { AuthContext } from "./../Auth";
+const zxcvbn = require("zxcvbn");
 
 const Register = ({ history }) => {
   const [Err, setErr] = useState({ error: "" });
@@ -23,14 +24,13 @@ const Register = ({ history }) => {
       event.preventDefault();
 
       const { email, password, cpassword, username } = event.target.elements;
-
       if (!username.value) {
         return setErr({ error: "Username is required" });
       }
       if (!email.value) {
         return setErr({ error: "Email is required" });
       }
-  
+
       if (!password.value) {
         return setErr({ error: "Password is required" });
       }
@@ -38,39 +38,40 @@ const Register = ({ history }) => {
         return setErr({ error: "Confirm password is required" });
       }
       if (password.value !== cpassword.value) {
-        return setErr({ error: "Your password and confirm password don't match" });
+        return setErr({
+          error: "Your password and confirm password don't match"
+        });
       }
-        try {
-          await firebase
-            .auth()
-            .createUserWithEmailAndPassword(email.value, password.value)
-            .then(async response => {
-              console.log("#", response);
-              await axios
-                .post("https://revcode.herokuapp.com/adduser", {
-                  uid: response.user.uid,
-                  name: username.value
-                })
-                .then(res => {
-                  console.log(res);
-                  alert("Successfully Registered");
-                })
-                .catch(err => {
-                  setErr({ error: err.message });
-                  //alert(err)
-                });
-              firebase.auth().signOut();
-              history.push("/");
-            })
-            .catch(err => {
-              setErr({ error: err.message });
-              //alert(error)
-            });
-        } catch (err) {
-          setErr({ error: err.message });
-          //alert(error)
-        }
-      
+      try {
+        await firebase
+          .auth()
+          .createUserWithEmailAndPassword(email.value, password.value)
+          .then(async response => {
+            console.log("#", response);
+            await axios
+              .post("https://revcode.herokuapp.com/adduser", {
+                uid: response.user.uid,
+                name: username.value
+              })
+              .then(res => {
+                console.log(res);
+                alert("Successfully Registered");
+              })
+              .catch(err => {
+                setErr({ error: err.message });
+                //alert(err)
+              });
+            firebase.auth().signOut();
+            history.push("/");
+          })
+          .catch(err => {
+            setErr({ error: err.message });
+            //alert(error)
+          });
+      } catch (err) {
+        setErr({ error: err.message });
+        //alert(error)
+      }
     },
     [history]
   );
@@ -93,12 +94,7 @@ const Register = ({ history }) => {
           error
           onSubmit={handleRegister}
         >
-          {Err.error && (
-            <Message
-              error
-              header={Err.error}
-            />
-          )}
+          {Err.error && <Message error header={Err.error} />}
           <Form.Input
             icon="user"
             iconPosition="left"
@@ -122,7 +118,12 @@ const Register = ({ history }) => {
             placeholder="Password"
             name="password"
             type="password"
+            onChange={e => {
+              const testedResult = zxcvbn(e.target.value);
+              console.log("####", testedResult.score);
+            }}
           />
+          
           <Form.Input
             icon="lock"
             iconPosition="left"
@@ -134,20 +135,25 @@ const Register = ({ history }) => {
           <Grid>
             <Grid.Column textAlign="center">
               <Grid.Row>
-              <Button
-                type="submit"
-                content="Sign Up"
-                basic
-                inverted
-                color="teal"
-                size="large"
-                style={{ marginTop: "1em" }}
-              />
+                <Button
+                  type="submit"
+                  content="Sign Up"
+                  basic
+                  inverted
+                  color="teal"
+                  size="large"
+                  style={{ marginTop: "1em" }}
+                />
               </Grid.Row>
               <GridRow>
                 <Header as="h5" textAlign="center">
-                  <Header.Content style={{ color: "#909090" , marginTop:"2em" }}>
-                    Already have an account? <Link to="/login"><i>Sign In</i></Link>
+                  <Header.Content
+                    style={{ color: "#909090", marginTop: "2em" }}
+                  >
+                    Already have an account?{" "}
+                    <Link to="/login">
+                      <i>Sign In</i>
+                    </Link>
                   </Header.Content>
                 </Header>
               </GridRow>
