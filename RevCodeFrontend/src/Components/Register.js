@@ -22,10 +22,22 @@ const Register = ({ history }) => {
 
       const { email, password, cpassword, username } = event.target.elements;
 
-      
+      if (!username.value) {
+        return setErr({ error: "Username is required" });
+      }
+      if (!email.value) {
+        return setErr({ error: "Email is required" });
+      }
+  
+      if (!password.value) {
+        return setErr({ error: "Password is required" });
+      }
+      if (!cpassword.value) {
+        return setErr({ error: "Confirm password is required" });
+      }
       if (password.value !== cpassword.value) {
-        alert("Confirm password and password don't match");
-      } else {
+        return setErr({ error: "Your password and confirm password don't match" });
+      }
         try {
           await firebase
             .auth()
@@ -56,7 +68,7 @@ const Register = ({ history }) => {
           setErr({ error: err.message });
           //alert(error)
         }
-      }
+      
     },
     [history]
   );
