@@ -31,20 +31,21 @@ const Register = ({ history }) => {
           .createUserWithEmailAndPassword(email.value, password.value)
           .then(async response => {
             console.log("#", response);
-            // await axios
-            //   .post("https://revcode.herokuapp.com/adduser", {
-            //     uid: response.user.uid,
-            //     name: username.value
-            //   })
-            //   .then(res => {
-            //     console.log(res);
-            //     alert("Successfully Registered");
-            //   })
-            //   .catch(err => {
-            //     alert(err)
-            //   });
-            //   history.push("/");
-            // }
+            await axios
+              .post("https://revcode.herokuapp.com/adduser", {
+                uid: response.user.uid,
+                name: username.value
+              })
+              .then(res => {
+                console.log(res);
+                alert("Successfully Registered");
+              })
+              .catch(err => {
+                alert(err)
+              });
+              firebase.auth().signOut()
+              history.push("/");
+            }
           )
           .catch(error => {
             alert(error)
