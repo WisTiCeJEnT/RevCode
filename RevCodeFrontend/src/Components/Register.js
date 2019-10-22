@@ -19,6 +19,7 @@ import { AuthContext } from "./../Auth";
 const zxcvbn = require("zxcvbn");
 
 const Register = ({ history }) => {
+  const [sign, setSign] = useState({ signed: false });
   const [Display, setDisplay] = useState({ show: false });
   const [Err, setErr] = useState({ error: "" });
   const [progress, setProgress] = useState({
@@ -54,6 +55,7 @@ const Register = ({ history }) => {
           .auth()
           .createUserWithEmailAndPassword(email.value, password.value)
           .then(async response => {
+            setSign({signed:true});
             console.log("#", response);
             await axios
               .post("https://revcode.herokuapp.com/adduser", {
@@ -86,7 +88,7 @@ const Register = ({ history }) => {
   );
   const { currentUser } = useContext(AuthContext);
 
-  if (currentUser) {
+  if (currentUser && !sign.signed) {
     return <Redirect to="/main" />;
   }
 
