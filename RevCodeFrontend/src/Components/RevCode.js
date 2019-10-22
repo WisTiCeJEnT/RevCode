@@ -53,7 +53,7 @@ export class RevCode extends Component {
 
   render() {
     const { dimmed, visible, activeItem } = this.state;
-    console.log(this.state);
+    console.log(firebase.auth().currentUser);
     return (
       <div>
         <Sidebar.Pushable as={Segment}>
@@ -89,7 +89,9 @@ export class RevCode extends Component {
             <Segment basic>
               <Header as="h3">Application Content</Header>
               <Button onClick={() => firebase.auth().signOut()}>Sign out</Button>
+              
             </Segment>
+
           </Sidebar.Pusher>
         </Sidebar.Pushable>
       </div>

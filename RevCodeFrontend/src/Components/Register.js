@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-
+import React, { useCallback, useContext } from "react";
+import { withRouter, Redirect } from "react-router";
 import {
   Button,
   Form,
@@ -11,9 +11,139 @@ import {
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import axios from "axios";
-import firebase from "./../FirebaseAPI";
+import firebase from "../FirebaseAPI";
+import { AuthContext } from "./../Auth";
 
-export class Register extends Component {
+const Register = ({ history }) => {
+  const handleRegister = useCallback(
+    async event => {
+      event.preventDefault();
+      
+      const { email, password , cpassword , username } = event.target.elements;
+      
+      if(password.value!==cpassword.value){
+        alert("Confirm password and password don't match")
+      }
+      else{
+      try {
+        await firebase
+          .auth()
+          .createUserWithEmailAndPassword(email.value, password.value)
+          .then(async response => {
+            console.log("#", response);
+            // await axios
+            //   .post("https://revcode.herokuapp.com/adduser", {
+            //     uid: response.user.uid,
+            //     name: username.value
+            //   })
+            //   .then(res => {
+            //     console.log(res);
+            //     alert("Successfully Registered");
+            //   })
+            //   .catch(err => {
+            //     alert(err)
+            //   });
+            //   history.push("/");
+            // }
+          )
+          .catch(error => {
+            alert(error)
+          });
+      } catch (error) {
+        alert(error)
+      }}
+    },
+    [history]
+  );
+
+
+  return (
+    <div className="area">
+        <Container className="box" style={{ width: 400 }}>
+          <Header as="h2" icon textAlign="center">
+            <Header.Content style={{ color: "white" }}>Register</Header.Content>
+          </Header>
+          <Divider />
+          <Form
+            inverted
+            style={{ paddingTop: 20 }}
+            error
+            onSubmit={handleRegister}
+          >
+            <Form.Input
+              icon="user"
+              iconPosition="left"
+              label="Username"
+              placeholder="Username"
+              name="username"
+              type="text"
+            />
+            <Form.Input
+              icon="mail"
+              iconPosition="left"
+              label="Email"
+              placeholder="Email"
+              name="email"
+              type="email"
+            />
+            <Form.Input
+              icon="lock"
+              iconPosition="left"
+              label="Password"
+              placeholder="Password"
+              name="password"
+              type="password"
+
+            />
+            <Form.Input
+              icon="lock"
+              iconPosition="left"
+              label="Confirm Password"
+              type="password"
+              placeholder="Confirm Password"
+              name="cpassword"
+ 
+            />
+            <Grid>
+              <Grid.Column textAlign="center">
+                <Button
+                  type="submit"
+                  content="Sign Up"
+                  basic
+                  inverted
+                  color="teal"
+                  size="large"
+                  style={{ marginTop: "1em" }}
+                />
+              </Grid.Column>
+            </Grid>
+          </Form>
+        </Container>
+
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+  );
+
+  }
+export default withRouter(Register);
+
+
+
+
+
+/*export class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -213,4 +343,4 @@ export class Register extends Component {
   }
 }
 
-export default Register;
+export default Register;*/
