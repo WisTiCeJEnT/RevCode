@@ -6,94 +6,49 @@ import {
   Icon,
   Menu,
   Segment,
-  Sidebar
+  Container,
+  Grid
 } from "semantic-ui-react";
 import firebase from "../FirebaseAPI";
-const VerticalSidebar = ({ animation, direction, visible }) => (
-  <Sidebar
-    as={Menu}
-    animation={animation}
-    direction={direction}
-    icon="labeled"
-    inverted
-    vertical
-    visible={visible}
-    width="thin"
-  >
-    <Menu.Item as="a">
-      <Icon name="home" />
-      Home
-    </Menu.Item>
-    <Menu.Item as="a">
-      <Icon name="gamepad" />
-      Games
-    </Menu.Item>
-    <Menu.Item as="a">
-      <Icon name="camera" />
-      Channels
-    </Menu.Item>
-  </Sidebar>
-);
-
-VerticalSidebar.propTypes = {
-  visible: PropTypes.bool
-};
 
 export class RevCode extends Component {
-  state = {
-    dimmed: false,
-    visible: false,
-    activeItem: "home"
-  };
-
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
-
   render() {
-    const { dimmed, visible, activeItem } = this.state;
-    console.log(firebase.auth().currentUser);
     return (
       <div>
-        <Sidebar.Pushable as={Segment}>
-          <VerticalSidebar
-            animation="push"
-            direction="left"
-            visible={visible}
-          />
-
-          <Sidebar.Pusher dimmed={dimmed && visible}>
-            <Segment inverted>
-              <Menu inverted pointing secondary>
-                <Menu.Item
-                  name="home"
-                  active={activeItem === "home"}
-                  onClick={(e, { name }) => {
-                    this.setState({ visible: !this.state.visible });
-                    this.setState({ activeItem: name });
-                  }}
-                />
-                <Menu.Item
-                  name="messages"
-                  active={activeItem === "messages"}
-                  onClick={this.handleItemClick}
-                />
-                <Menu.Item
-                  name="friends"
-                  active={activeItem === "friends"}
-                  onClick={this.handleItemClick}
-                />
-              </Menu>
-            </Segment>
-            <Segment basic>
-              <Header as="h3">Application Content</Header>
-              <Button onClick={() => firebase.auth().signOut()}>Sign out</Button>
-              
-            </Segment>
-
-          </Sidebar.Pusher>
-        </Sidebar.Pushable>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column widescreen>
+              <Segment inverted>
+                <Menu inverted secondary>
+                  <Menu.Item>
+                    <Icon name="code" />
+                    <b>RevCode</b>
+                  </Menu.Item>
+                </Menu>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          {/* <Grid.Row>
+        <Grid.Column width={2} color="red">
+        <Container>
+       
+        File
+       
+        </Container>
+        </Grid.Column>
+        <Grid.Column width={7} color="blue">
+        Speech Section
+        </Grid.Column>
+        <Grid.Column width={7} color="black">
+        Code Section
+        </Grid.Column>
+        </Grid.Row> */}
+        </Grid>
       </div>
     );
   }
 }
 
 export default RevCode;
+
+// <Button onClick={() => firebase.auth().signOut()}>Sign out</Button>
