@@ -1,30 +1,42 @@
 import React, { Component } from "react";
 import {
   Container,
-  Divider,
   Icon,
   Grid,
   Header,
-  Image,
-  List,
   Menu,
   Segment,
-  Button,
-  Label
+  Dropdown,
+  
 } from "semantic-ui-react";
 import firebase from "./../FirebaseAPI";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import axios from "axios";
+
 
 export class RevCode extends Component {
-  componentDidMount() {
-    console.log(firebase.auth().currentUser.uid);
-  }
   state = {
-    code: `a = int(input())\nb = []\nfor i in range(a):\n\tb.append(i)`
+    code: `a = int(input())\nb = []\nfor i in range(a):\n\tb.append(i)`,
+    userData: { name: "" }
   };
+  componentDidMount() {
+    const uid = firebase.auth().currentUser.uid;
+    const url = "https://revcode.herokuapp.com//userdata?uid=" + uid;
+    axios
+      .get(url)
+      .then(res => {
+        console.log(res.data.userData);
+        this.setState({ userData: res.data.userData.user_data });
+        this.setState({ userFile: res.data.userData.user_storage });
+      })
+      .catch(err => {
+        alert(err.message);
+      });
+  }
 
   render() {
+    console.log(this.state);
     return (
       <div>
         <Segment
@@ -39,22 +51,28 @@ export class RevCode extends Component {
               <b>RevCode</b>
             </Menu.Item>
 
-            <Menu.Item
-              as="a"
-              header
-              position="right"
-              style={{ marginRight: "2em" }}
-              onClick={() => {
-                firebase.auth().signOut();
-              }}
-            >
-              Name
-            </Menu.Item>
+            <Menu.Menu position="right">
+              <Dropdown item simple icon="user circle">
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    text={
+                      <span>
+                        Signed in as <strong>{this.state.userData.name}</strong>
+                      </span>
+                    }
+                    disabled
+                  />
+                  <Dropdown.Item text="Sign Out" onClick={()=>{
+                    firebase.auth().signOut();
+                  }} />
+                </Dropdown.Menu>
+              </Dropdown>
+            </Menu.Menu>
           </Menu>
         </Segment>
 
         <Segment vertical style={{ height: "100vh", padding: "1em 0em" }}>
-          <Container >
+          <Container>
             <Grid divided stackable>
               <Grid.Column width={3}>
                 <Header as="h4" content="Files" />
