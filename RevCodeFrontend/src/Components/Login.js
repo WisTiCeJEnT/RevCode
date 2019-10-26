@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 import { withRouter, Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -9,7 +9,9 @@ import {
   Message,
   Container,
   Divider,
-  GridRow
+  Icon,
+  Dimmer,
+  Loader
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import firebase from "../FirebaseAPI";
@@ -17,22 +19,37 @@ import { AuthContext } from "./../Auth";
 
 const Login = ({ history }) => {
   const [Err, setErr] = useState({ error: "" });
+  const [Load, setLoad] = useState({ loading: false });
+  const [Firebaseload, setFirebaseload] = useState({ loading: true });
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(() => {
+      setFirebaseload({ loading: false });
+    });
+  }, []);
   const handleLogin = useCallback(
     async event => {
       event.preventDefault();
+      setLoad({ loading: true });
       const { email, password } = event.target.elements;
       if (!email.value) {
+        setLoad({ loading: false });
         return setErr({ error: "Email is required" });
       }
       if (!password.value) {
+        setLoad({ loading: false });
         return setErr({ error: "Password is required" });
       }
       try {
         await firebase
           .auth()
-          .signInWithEmailAndPassword(email.value, password.value);
-        history.push("/main");
+          .signInWithEmailAndPassword(email.value, password.value)
+          .then(() => {
+            setLoad({ loading: false });
+            history.push("/main");
+          });
       } catch (err) {
+        setLoad({ loading: false });
         setErr({ error: err.message });
       }
     },
@@ -44,6 +61,15 @@ const Login = ({ history }) => {
   if (currentUser) {
     return <Redirect to="/main" />;
   }
+
+  if (Firebaseload.loading) {
+    return (
+      <Dimmer active>
+        <Loader size="massive" />
+      </Dimmer>
+    );
+  }
+
   return (
     <div className="area">
       <Container className="box" style={{ width: 400 }}>
@@ -81,9 +107,10 @@ const Login = ({ history }) => {
                   color="teal"
                   size="large"
                   style={{ marginTop: "1em" }}
+                  loading={Load.loading}
                 />
               </Grid.Row>
-              <GridRow>
+              <Grid.Row>
                 <Header as="h5" textAlign="center">
                   <Header.Content
                     style={{ color: "#909090", marginTop: "2em" }}
@@ -94,7 +121,15 @@ const Login = ({ history }) => {
                     </Link>
                   </Header.Content>
                 </Header>
-              </GridRow>
+                <Header as="h6" textAlign="center">
+                  <Header.Content style={{ color: "#909090" }}>
+                    <Link to="/">
+                      <Icon name="arrow left" />
+                      <span>Back to RevCode</span>
+                    </Link>
+                  </Header.Content>
+                </Header>
+              </Grid.Row>
             </Grid.Column>
           </Grid>
         </Form>
@@ -119,146 +154,4 @@ const Login = ({ history }) => {
 
 export default withRouter(Login);
 
-/*export class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: "",
-      password: "",
-      error: "",
-      currentUser: "",
-      loginData: {}
-    };
 
-    this.handlePassChange = this.handlePassChange.bind(this);
-    this.handleUserChange = this.handleUserChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.dismissError = this.dismissError.bind(this);
-
-    
-  }
-
-  dismissError() {
-    this.setState({ error: "" });
-  }
-
-  handleSubmit = async evt => {
-    evt.preventDefault();
-    if (!this.state.username) {
-      return this.setState({ error: "Username is required" });
-    }
-
-    if (!this.state.password) {
-      return this.setState({ error: "Password is required" });
-    }
-    const email = this.state.username;
-    const password = this.state.password;
-    try {
-      await firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(response => {
-          console.log("#", response.user.uid);
-          alert("Successfully Logged In");
-          return this.props.history.push("/main")
-          
-        })
-        .catch(error => {
-          this.setState({
-            error: error.message
-          });
-        });
-    } catch (error) {
-      this.setState({
-        error: error.message
-      });
-    }
-
-    return this.setState({ error: "" });
-  };
-
-  handleUserChange(evt) {
-    this.setState({
-      username: evt.target.value
-    });
-  }
-
-  handlePassChange(evt) {
-    this.setState({
-      password: evt.target.value
-    });
-  }
-  render() {
-    console.log(this.state);
-    return (
-      <div className="area">
-        <Container className="box" style={{ width: 400 }}>
-          <Header as="h2" icon textAlign="center">
-            <Header.Content style={{ color: "white" }}>Sign In</Header.Content>
-          </Header>
-          <Divider />
-          <Form
-            inverted
-            style={{ paddingTop: 20 }}
-            error
-            onSubmit={this.handleSubmit}
-          >
-            {this.state.error && (
-              <Message
-                onClick={this.dismissError}
-                error
-                header={this.state.error}
-              />
-            )}
-            <Form.Input
-              icon="user"
-              iconPosition="left"
-              label="Username"
-              placeholder="Username"
-              value={this.state.username}
-              onChange={this.handleUserChange}
-            />
-            <Form.Input
-              icon="lock"
-              iconPosition="left"
-              label="Password"
-              type="password"
-              placeholder="Password"
-              value={this.state.password}
-              onChange={this.handlePassChange}
-            />
-            <Grid>
-              <Grid.Column textAlign="center">
-                <Button
-                  type="submit"
-                  content="Login"
-                  basic
-                  inverted
-                  color="teal"
-                  size="large"
-                  style={{ marginTop: "1em" }}
-                />
-              </Grid.Column>
-            </Grid>
-          </Form>
-        </Container>
-
-        <ul className="circles">
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ul>
-      </div>
-    );
-  }
-}
-
-export default Login;*/

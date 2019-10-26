@@ -25,7 +25,7 @@ export class RevCode extends Component {
     const url = "https://revcode.herokuapp.com//userdata?uid=" + uid;
     axios
       .get(url)
-      .then(res => {
+      .then( async res => {
         console.log(res.data.userData);
         this.setState({ userData: res.data.userData.user_data });
         this.setState({ userFile: res.data.userData.user_storage });

@@ -10,7 +10,8 @@ import {
   Container,
   Divider,
   GridRow,
-  Progress
+  Progress,
+  Icon
 } from "semantic-ui-react";
 import "./../Style/Login.css";
 import axios from "axios";
@@ -21,6 +22,7 @@ const zxcvbn = require("zxcvbn");
 const Register = ({ history }) => {
   const [sign, setSign] = useState({ signed: false });
   const [Display, setDisplay] = useState({ show: false });
+  const [Load , setLoad] = useState({loading:false})
   const [Err, setErr] = useState({ error: "" });
   const [progress, setProgress] = useState({
     percent: 0,
@@ -30,22 +32,27 @@ const Register = ({ history }) => {
   const handleRegister = useCallback(
     async event => {
       event.preventDefault();
-
+      setLoad({loading:true})
       const { email, password, cpassword, username } = event.target.elements;
       if (!username.value) {
+        setLoad({loading:false})
         return setErr({ error: "Username is required" });
       }
       if (!email.value) {
+        setLoad({loading:false})
         return setErr({ error: "Email is required" });
       }
 
       if (!password.value) {
+        setLoad({loading:false})
         return setErr({ error: "Password is required" });
       }
       if (!cpassword.value) {
+        setLoad({loading:false})
         return setErr({ error: "Confirm password is required" });
       }
       if (password.value !== cpassword.value) {
+        setLoad({loading:false})
         return setErr({
           error: "Your password and confirm password don't match"
         });
@@ -63,6 +70,7 @@ const Register = ({ history }) => {
                 name: username.value
               })
               .then(res => {
+                setLoad({loading:false})
                 console.log(res);
                 
                 alert("Successfully Registered");
@@ -70,16 +78,19 @@ const Register = ({ history }) => {
                 history.push("/");
               })
               .catch(err => {
+                setLoad({loading:false})
                 setErr({ error: err.message });
                 //alert(err)
               });
             firebase.auth().signOut();
           })
           .catch(err => {
+            setLoad({loading:false})
             setErr({ error: err.message });
             //alert(error)
           });
       } catch (err) {
+        setLoad({loading:false})
         setErr({ error: err.message });
         //alert(error)
       }
@@ -153,7 +164,7 @@ const Register = ({ history }) => {
                   scale: "Strong"
                 });
               }
-              console.log(progress);
+              
             }}
           />
 
@@ -198,6 +209,7 @@ const Register = ({ history }) => {
                   color="teal"
                   size="large"
                   style={{ marginTop: "1em" }}
+                  loading={Load.loading}
                 />
               </Grid.Row>
               <GridRow>
@@ -208,6 +220,18 @@ const Register = ({ history }) => {
                     Already have an account?{" "}
                     <Link to="/login">
                       <i>Sign In</i>
+                    </Link>
+                  </Header.Content>
+                </Header>
+                <Header as="h6" textAlign="center">
+                  <Header.Content
+                    style={{ color: "#909090"}}
+                  >
+                    <Link to="/">
+                    <Icon name="arrow left" />
+                    <span>
+                    Back to RevCode
+                    </span>
                     </Link>
                   </Header.Content>
                 </Header>
