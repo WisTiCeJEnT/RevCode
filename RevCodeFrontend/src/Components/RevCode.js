@@ -7,7 +7,9 @@ import {
   Menu,
   Segment,
   Dropdown,
-  List
+  List,
+  Button,
+  Modal
 } from "semantic-ui-react";
 import firebase from "./../FirebaseAPI";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -18,10 +20,12 @@ import File from "./File";
 export class RevCode extends Component {
   state = {
     fileId: "",
+    fileName:"",
     extension: "",
     code: "",
     userData: { name: "", uid: "" },
-    userFile: []
+    userFile: [],
+    modalOpen: false
   };
   componentDidMount() {
     const uid = firebase.auth().currentUser.uid;
@@ -29,19 +33,34 @@ export class RevCode extends Component {
     axios
       .get(url)
       .then(async res => {
-        //console.log(res.data.userData);
         this.setState({ userData: res.data.userData.user_data });
-        this.setState({ userFile: res.data.userData.user_storage });
+
+        //add active to each object in array
+        const tmp = [...res.data.userData.user_storage];
+        tmp.map(key => {
+          return (key.active = false);
+        });
+
+        this.setState({ userFile: tmp });
       })
       .catch(err => {
         alert(err.message);
       });
   }
 
-  setCurrentFile = (fileId, fileExt) => {
+  setCurrentFile = (fileId, fileExt , fileName) => {
     const ex = fileExt.split(" ")[2].toLowerCase();
     this.setState({ fileId: fileId });
     this.setState({ extension: ex });
+    this.setState({ fileName: fileName });
+
+    //set active file
+    const tmp = [...this.state.userFile];
+    tmp.map(key => {
+      if (key.file_id === fileId) return (key.active = true);
+      else return (key.active = false);
+    });
+    this.setState({ userFile: tmp });
     firebase
       .database()
       .ref(
@@ -50,6 +69,15 @@ export class RevCode extends Component {
       .once("value", data => {
         this.setState({ code: data.val() });
       });
+  };
+
+  delFile = () => {
+    const tmp = [
+      ...this.state.userFile.filter(file => file.file_id !== this.state.fileId)
+    ];
+    this.setState({modalOpen:false})
+    this.setState({ userFile: tmp });
+    this.setState({ fileId: "", extension: "", code: "" ,fileName:""});
   };
 
   render() {
@@ -80,7 +108,7 @@ export class RevCode extends Component {
                     disabled
                   />
                   <Dropdown.Item
-                    text="Sign Out"
+                    text="Sign out"
                     onClick={() => {
                       firebase.auth().signOut();
                     }}
@@ -91,18 +119,63 @@ export class RevCode extends Component {
           </Menu>
         </Segment>
 
-        <Segment vertical style={{ height: "100vh", padding: "1em 0em" }}>
+        <Segment vertical style={{ padding: "1em 0em" }}>
           <Container>
-            <Grid divided stackable>
+            <Grid divided stackable style={{ minHeight: "90vh" }}>
               <Grid.Column width={3}>
-                <Header as="h4" content="Files" />
+                <Grid.Row style={{ height: "98%" }}>
+                  <Header as="h4" content="Files" />
 
-                <List divided relaxed animated selection>
-                  <File
-                    data={this.state.userFile}
-                    setCurrentFile={this.setCurrentFile}
-                  />
-                </List>
+                  <List divided relaxed animated selection>
+                    <File
+                      data={this.state.userFile}
+                      setCurrentFile={this.setCurrentFile}
+                    />
+                  </List>
+                </Grid.Row>
+                <Grid.Row style={{ height: "2%" }}>
+                  <Button.Group compact size="mini" floated="right" basic>
+                    <Button icon>
+                      <Icon name="add" />
+                    </Button>
+
+                    <Modal
+                      trigger={
+                        <Button icon onClick={()=>{
+                          if(this.state.fileId!=="")
+                            this.setState({modalOpen:true})
+                          else
+                            alert("Choose your file to delete")}}>
+                          <Icon name="minus" />
+                        </Button>
+                      }
+                      basic
+                      size="small"
+                      open={this.state.modalOpen}
+                    >
+                      <Header>
+                        <Icon name="trash alternate" color="red" />
+                        <Header.Content>
+                          Do you want to delete  <i>{this.state.fileName}?</i>
+                        </Header.Content>
+                      </Header>
+                      <Modal.Content>
+                        <p>
+                          Your file will permanently be deleted. {" "}
+                          <b>Are you sure you want to delete it?</b>
+                        </p>
+                      </Modal.Content>
+                      <Modal.Actions>
+                        <Button basic color="red" inverted onClick={()=>{this.setState({modalOpen:false})}}>
+                          <Icon name="remove" /> No
+                        </Button>
+                        <Button color="green" inverted onClick={this.delFile}>
+                          <Icon name="checkmark" /> Yes
+                        </Button>
+                      </Modal.Actions>
+                    </Modal>
+                  </Button.Group>
+                </Grid.Row>
               </Grid.Column>
               <Grid.Column width={6}>
                 <Header as="h4" content="Speech" />
@@ -113,6 +186,7 @@ export class RevCode extends Component {
                 <SyntaxHighlighter
                   language={this.state.extension}
                   style={atomDark}
+                  showLineNumbers={true}
                   wrapLines={true}
                 >
                   {this.state.code}
