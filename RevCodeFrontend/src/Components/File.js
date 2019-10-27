@@ -13,7 +13,7 @@ export class File extends Component {
   render() {
     return this.props.data.map(file => (
       <List.Item key={file.file_id} onClick={()=>{
-          this.props.setCurrentFile(file.file_id)
+          this.props.setCurrentFile(file.file_id,file.extension)
       }}>
         <List.Icon
           name={this.iconCheck(file.extension)}

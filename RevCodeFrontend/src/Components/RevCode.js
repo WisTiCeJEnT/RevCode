@@ -15,13 +15,13 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import axios from "axios";
 import File from "./File";
 
-
 export class RevCode extends Component {
   state = {
-    fileId:"",
-    code: `a = int(input())\nb = []\nfor i in range(a):\n\tb.append(i)`,
-    userData: { name: "" },
-    userFile:[]
+    fileId: "",
+    extension: "",
+    code: "",
+    userData: { name: "", uid: "" },
+    userFile: []
   };
   componentDidMount() {
     const uid = firebase.auth().currentUser.uid;
@@ -38,9 +38,19 @@ export class RevCode extends Component {
       });
   }
 
-  setCurrentFile=(fileId)=>{
-    this.setState({fileId:fileId})
-  }
+  setCurrentFile = (fileId, fileExt) => {
+    const ex = fileExt.split(" ")[2].toLowerCase();
+    this.setState({ fileId: fileId });
+    this.setState({ extension: ex });
+    firebase
+      .database()
+      .ref(
+        "user/" + this.state.userData.uid + "/user_storage/" + fileId + "/code"
+      )
+      .once("value", data => {
+        this.setState({ code: data.val() });
+      });
+  };
 
   render() {
     console.log(this.state);
@@ -82,15 +92,17 @@ export class RevCode extends Component {
         </Segment>
 
         <Segment vertical style={{ height: "100vh", padding: "1em 0em" }}>
-          <Container >
+          <Container>
             <Grid divided stackable>
               <Grid.Column width={3}>
                 <Header as="h4" content="Files" />
-                
-                  <List divided relaxed>
-                     <File data={this.state.userFile} setCurrentFile={this.setCurrentFile} /> 
-                  </List>
-              
+
+                <List divided relaxed animated selection>
+                  <File
+                    data={this.state.userFile}
+                    setCurrentFile={this.setCurrentFile}
+                  />
+                </List>
               </Grid.Column>
               <Grid.Column width={6}>
                 <Header as="h4" content="Speech" />
@@ -99,7 +111,7 @@ export class RevCode extends Component {
               <Grid.Column width={7}>
                 <Header as="h4" content="Code Display" />
                 <SyntaxHighlighter
-                  language="python"
+                  language={this.state.extension}
                   style={atomDark}
                   wrapLines={true}
                 >
