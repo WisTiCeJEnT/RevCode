@@ -36,6 +36,7 @@ const Login = ({ history }) => {
     });
     return () => (isSubscribed = false);
   }, []);
+  
   const handleLogin = useCallback(
     async event => {
       event.preventDefault();

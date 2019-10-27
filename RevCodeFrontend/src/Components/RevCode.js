@@ -18,22 +18,28 @@ import File from "./File";
 
 export class RevCode extends Component {
   state = {
+    fileId:"",
     code: `a = int(input())\nb = []\nfor i in range(a):\n\tb.append(i)`,
-    userData: { name: "" }
+    userData: { name: "" },
+    userFile:[]
   };
   componentDidMount() {
     const uid = firebase.auth().currentUser.uid;
-    const url = "https://revcode.herokuapp.com//userdata?uid=" + uid;
+    const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
     axios
       .get(url)
       .then(async res => {
-        console.log(res.data.userData);
+        //console.log(res.data.userData);
         this.setState({ userData: res.data.userData.user_data });
         this.setState({ userFile: res.data.userData.user_storage });
       })
       .catch(err => {
         alert(err.message);
       });
+  }
+
+  setCurrentFile=(fileId)=>{
+    this.setState({fileId:fileId})
   }
 
   render() {
@@ -82,51 +88,7 @@ export class RevCode extends Component {
                 <Header as="h4" content="Files" />
                 
                   <List divided relaxed>
-                    <List.Item>
-                      <List.Icon
-                        name="github"
-                        size="large"
-                        verticalAlign="middle"
-                      />
-                      <List.Content>
-                        <List.Header as="a">
-                          Semantic-Org/Semantic-UI
-                        </List.Header>
-                        <List.Description as="a">
-                          Updated 10 mins ago
-                        </List.Description>
-                      </List.Content>
-                    </List.Item>
-                    <List.Item>
-                      <List.Icon
-                        name="github"
-                        size="large"
-                        verticalAlign="middle"
-                      />
-                      <List.Content>
-                        <List.Header as="a">
-                          Semantic-Org/Semantic-UI-Docs
-                        </List.Header>
-                        <List.Description as="a">
-                          Updated 22 mins ago
-                        </List.Description>
-                      </List.Content>
-                    </List.Item>
-                    <List.Item>
-                      <List.Icon
-                        name="github"
-                        size="large"
-                        verticalAlign="middle"
-                      />
-                      <List.Content>
-                        <List.Header as="a">
-                          Semantic-Org/Semantic-UI-Meteor
-                        </List.Header>
-                        <List.Description as="a">
-                          Updated 34 mins ago
-                        </List.Description>
-                      </List.Content>
-                    </List.Item>
+                     <File data={this.state.userFile} setCurrentFile={this.setCurrentFile} /> 
                   </List>
               
               </Grid.Column>
