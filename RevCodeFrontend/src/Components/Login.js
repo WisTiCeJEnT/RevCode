@@ -1,4 +1,9 @@
-import React, { useCallback, useContext, useState, useEffect } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 import { withRouter, Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -23,9 +28,13 @@ const Login = ({ history }) => {
   const [Firebaseload, setFirebaseload] = useState({ loading: true });
 
   useEffect(() => {
+    let isSubscribed = true;
     firebase.auth().onAuthStateChanged(() => {
-      setFirebaseload({ loading: false });
+      if (isSubscribed) {
+        setFirebaseload({ loading: false });
+      }
     });
+    return () => (isSubscribed = false);
   }, []);
   const handleLogin = useCallback(
     async event => {
@@ -153,5 +162,3 @@ const Login = ({ history }) => {
 };
 
 export default withRouter(Login);
-
-

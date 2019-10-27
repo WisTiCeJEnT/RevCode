@@ -7,12 +7,13 @@ import {
   Menu,
   Segment,
   Dropdown,
-  
+  List
 } from "semantic-ui-react";
 import firebase from "./../FirebaseAPI";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import axios from "axios";
+import File from "./File";
 
 
 export class RevCode extends Component {
@@ -25,7 +26,7 @@ export class RevCode extends Component {
     const url = "https://revcode.herokuapp.com//userdata?uid=" + uid;
     axios
       .get(url)
-      .then( async res => {
+      .then(async res => {
         console.log(res.data.userData);
         this.setState({ userData: res.data.userData.user_data });
         this.setState({ userFile: res.data.userData.user_storage });
@@ -62,9 +63,12 @@ export class RevCode extends Component {
                     }
                     disabled
                   />
-                  <Dropdown.Item text="Sign Out" onClick={()=>{
-                    firebase.auth().signOut();
-                  }} />
+                  <Dropdown.Item
+                    text="Sign Out"
+                    onClick={() => {
+                      firebase.auth().signOut();
+                    }}
+                  />
                 </Dropdown.Menu>
               </Dropdown>
             </Menu.Menu>
@@ -72,10 +76,59 @@ export class RevCode extends Component {
         </Segment>
 
         <Segment vertical style={{ height: "100vh", padding: "1em 0em" }}>
-          <Container>
+          <Container >
             <Grid divided stackable>
               <Grid.Column width={3}>
                 <Header as="h4" content="Files" />
+                
+                  <List divided relaxed>
+                    <List.Item>
+                      <List.Icon
+                        name="github"
+                        size="large"
+                        verticalAlign="middle"
+                      />
+                      <List.Content>
+                        <List.Header as="a">
+                          Semantic-Org/Semantic-UI
+                        </List.Header>
+                        <List.Description as="a">
+                          Updated 10 mins ago
+                        </List.Description>
+                      </List.Content>
+                    </List.Item>
+                    <List.Item>
+                      <List.Icon
+                        name="github"
+                        size="large"
+                        verticalAlign="middle"
+                      />
+                      <List.Content>
+                        <List.Header as="a">
+                          Semantic-Org/Semantic-UI-Docs
+                        </List.Header>
+                        <List.Description as="a">
+                          Updated 22 mins ago
+                        </List.Description>
+                      </List.Content>
+                    </List.Item>
+                    <List.Item>
+                      <List.Icon
+                        name="github"
+                        size="large"
+                        verticalAlign="middle"
+                      />
+                      <List.Content>
+                        <List.Header as="a">
+                          Semantic-Org/Semantic-UI-Meteor
+                        </List.Header>
+                        <List.Description as="a">
+                          Updated 34 mins ago
+                        </List.Description>
+                      </List.Content>
+                    </List.Item>
+                  </List>
+              
               </Grid.Column>
               <Grid.Column width={6}>
                 <Header as="h4" content="Speech" />
