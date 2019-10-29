@@ -9,23 +9,43 @@ import {
   Dropdown,
   List,
   Button,
-  Modal
+  Modal,
+  Input
 } from "semantic-ui-react";
 import firebase from "./../FirebaseAPI";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import axios from "axios";
 import File from "./File";
+import Add from "./AddFile";
+
+const Language = [
+  {
+    key: "1",
+    text: "Python",
+    value: "Python",
+    icon: "python"
+  },
+  {
+    key: "2",
+    text: "Javascript",
+    value: "Javascript",
+    icon: "js"
+  }
+];
 
 export class RevCode extends Component {
   state = {
     fileId: "",
-    fileName:"",
+    fileName: "",
     extension: "",
     code: "",
     userData: { name: "", uid: "" },
     userFile: [],
-    modalOpen: false
+    modalOpen: false,
+    modalAddOpen: false,
+    dropVal:"Python",
+    inputVal:""
   };
   componentDidMount() {
     const uid = firebase.auth().currentUser.uid;
@@ -48,7 +68,7 @@ export class RevCode extends Component {
       });
   }
 
-  setCurrentFile = (fileId, fileExt , fileName) => {
+  setCurrentFile = (fileId, fileExt, fileName) => {
     const ex = fileExt.split(" ")[2].toLowerCase();
     this.setState({ fileId: fileId });
     this.setState({ extension: ex });
@@ -75,10 +95,20 @@ export class RevCode extends Component {
     const tmp = [
       ...this.state.userFile.filter(file => file.file_id !== this.state.fileId)
     ];
-    this.setState({modalOpen:false})
+    this.setState({ modalOpen: false });
     this.setState({ userFile: tmp });
-    this.setState({ fileId: "", extension: "", code: "" ,fileName:""});
+    this.setState({ fileId: "", extension: "", code: "", fileName: "" });
   };
+
+  addFile = () => {
+    axios.get("https://revcode.herokuapp.com/newfile?uid="+this.state.userData.uid).then(res=>{
+      this.setState({ modalAddOpen: false });
+      //console.log('#',res)
+    })
+    const tmp = [...this.state.userFile];
+  };
+
+  
 
   render() {
     console.log(this.state);
@@ -135,17 +165,72 @@ export class RevCode extends Component {
                 </Grid.Row>
                 <Grid.Row style={{ height: "2%" }}>
                   <Button.Group compact size="mini" floated="right" basic>
-                    <Button icon>
-                      <Icon name="add" />
-                    </Button>
-
+                    <Modal
+                      size="mini"
+                      trigger={
+                        <Button
+                          icon
+                          onClick={() => {
+                            this.setState({ modalAddOpen: true });
+                          }}
+                        >
+                          <Icon name="add" />
+                        </Button>
+                      }
+                      open={this.state.modalAddOpen}
+                    >
+                      <Modal.Header><span>Add New File{" "}<Icon name="add" /></span></Modal.Header>
+                      <Modal.Content style={{ padding: "1em" }}>
+                        <span>
+                          Choose file language:{" "}
+                          <Dropdown
+                            inline
+                            options={Language}
+                            
+                            onChange={(e,{ value }) => {this.setState({dropVal:value})}}
+                            value={this.state.dropVal}
+                          />
+                        </span>
+                      </Modal.Content>
+                      <Modal.Content style={{ padding: "1em" }}>
+                        <span>
+                          Enter file name:{" "}
+                          <Input
+                            label={this.state.dropVal==="Python"?".py":".js"}
+                            labelPosition="right"
+                            placeholder="File name..."
+                            onChange={(e)=>{this.setState({inputVal:e.target.value})}}
+                          ></Input>
+                        </span>
+                      </Modal.Content>
+                      <Modal.Actions>
+                        <Button
+                          inverted
+                          color="red"
+                          onClick={() => {
+                            this.setState({ modalAddOpen: false });
+                          }}
+                        >
+                          <Icon name="remove" /> Cancel
+                        </Button>
+                        <Button
+                          color="green"
+                          onClick={this.addFile}
+                        >
+                          <Icon name="checkmark" /> Add
+                        </Button>
+                      </Modal.Actions>
+                    </Modal>
                     <Modal
                       trigger={
-                        <Button icon onClick={()=>{
-                          if(this.state.fileId!=="")
-                            this.setState({modalOpen:true})
-                          else
-                            alert("Choose your file to delete")}}>
+                        <Button
+                          icon
+                          onClick={() => {
+                            if (this.state.fileId !== "")
+                              this.setState({ modalOpen: true });
+                            else alert("Choose your file to delete");
+                          }}
+                        >
                           <Icon name="minus" />
                         </Button>
                       }
@@ -156,17 +241,24 @@ export class RevCode extends Component {
                       <Header>
                         <Icon name="trash alternate" color="red" />
                         <Header.Content>
-                          Do you want to delete  <i>{this.state.fileName}?</i>
+                          Do you want to delete <i>{this.state.fileName}?</i>
                         </Header.Content>
                       </Header>
                       <Modal.Content>
                         <p>
-                          Your file will permanently be deleted. {" "}
+                          Your file will permanently be deleted.{" "}
                           <b>Are you sure you want to delete it?</b>
                         </p>
                       </Modal.Content>
                       <Modal.Actions>
-                        <Button basic color="red" inverted onClick={()=>{this.setState({modalOpen:false})}}>
+                        <Button
+                          basic
+                          color="red"
+                          inverted
+                          onClick={() => {
+                            this.setState({ modalOpen: false });
+                          }}
+                        >
                           <Icon name="remove" /> No
                         </Button>
                         <Button color="green" inverted onClick={this.delFile}>
