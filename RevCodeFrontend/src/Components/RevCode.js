@@ -40,14 +40,15 @@ export class RevCode extends Component {
     fileName: "",
     extension: "",
     code: "",
-    userData: { name: "", uid: "" },
+    userData: { name:"" , uid: "" },
     userFile: [],
     modalOpen: false,
     modalAddOpen: false,
-    dropVal:"Python",
-    inputVal:""
+    dropVal: "Python",
+    inputVal: ""
   };
-  componentDidMount() {
+
+  initializeData = () => {
     const uid = firebase.auth().currentUser.uid;
     const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
     axios
@@ -66,6 +67,9 @@ export class RevCode extends Component {
       .catch(err => {
         alert(err.message);
       });
+  };
+  componentDidMount() {
+    this.initializeData();
   }
 
   setCurrentFile = (fileId, fileExt, fileName) => {
@@ -101,14 +105,22 @@ export class RevCode extends Component {
   };
 
   addFile = () => {
-    axios.get("https://revcode.herokuapp.com/newfile?uid="+this.state.userData.uid).then(res=>{
-      this.setState({ modalAddOpen: false });
-      //console.log('#',res)
-    })
+    const data = {
+      uid: this.state.userData.uid,
+      filename:
+        this.state.inputVal + (this.state.dropVal === "Python" ? ".py" : ".js"),
+      extension:
+        this.state.dropVal === "Python" ? "py - Python" : "js - Javascript"
+    };
+    //console.log('@',data)
+    axios.post("https://revcode.herokuapp.com/newfile", data).then(res => {
+      console.log("#", res);
+      this.initializeData();
+
+    }).catch(e=>{alert(e.message)});
+    this.setState({ modalAddOpen: false });
     const tmp = [...this.state.userFile];
   };
-
-  
 
   render() {
     console.log(this.state);
@@ -150,7 +162,7 @@ export class RevCode extends Component {
         </Segment>
 
         <Segment vertical style={{ padding: "1em 0em" }}>
-          <Container>
+          <Container fluid>
             <Grid divided stackable style={{ minHeight: "90vh" }}>
               <Grid.Column width={3}>
                 <Grid.Row style={{ height: "98%" }}>
@@ -179,15 +191,20 @@ export class RevCode extends Component {
                       }
                       open={this.state.modalAddOpen}
                     >
-                      <Modal.Header><span>Add New File{" "}<Icon name="add" /></span></Modal.Header>
+                      <Modal.Header>
+                        <span>
+                          Add New File <Icon name="add" />
+                        </span>
+                      </Modal.Header>
                       <Modal.Content style={{ padding: "1em" }}>
                         <span>
                           Choose file language:{" "}
                           <Dropdown
                             inline
                             options={Language}
-                            
-                            onChange={(e,{ value }) => {this.setState({dropVal:value})}}
+                            onChange={(e, { value }) => {
+                              this.setState({ dropVal: value });
+                            }}
                             value={this.state.dropVal}
                           />
                         </span>
@@ -196,10 +213,14 @@ export class RevCode extends Component {
                         <span>
                           Enter file name:{" "}
                           <Input
-                            label={this.state.dropVal==="Python"?".py":".js"}
+                            label={
+                              this.state.dropVal === "Python" ? ".py" : ".js"
+                            }
                             labelPosition="right"
                             placeholder="File name..."
-                            onChange={(e)=>{this.setState({inputVal:e.target.value})}}
+                            onChange={e => {
+                              this.setState({ inputVal: e.target.value });
+                            }}
                           ></Input>
                         </span>
                       </Modal.Content>
@@ -213,10 +234,7 @@ export class RevCode extends Component {
                         >
                           <Icon name="remove" /> Cancel
                         </Button>
-                        <Button
-                          color="green"
-                          onClick={this.addFile}
-                        >
+                        <Button color="green" onClick={this.addFile}>
                           <Icon name="checkmark" /> Add
                         </Button>
                       </Modal.Actions>
