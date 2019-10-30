@@ -13,11 +13,9 @@ import {
   Input
 } from "semantic-ui-react";
 import firebase from "./../FirebaseAPI";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import axios from "axios";
 import File from "./File";
-
+import Code from "./Code";
 
 const Language = [
   {
@@ -39,7 +37,7 @@ export class RevCode extends Component {
     fileId: "",
     fileName: "",
     extension: "",
-    code: "",
+    code:"",
     userData: { name: "", uid: "" },
     userFile: [],
     modalOpen: false,
@@ -47,6 +45,7 @@ export class RevCode extends Component {
     dropVal: "Python",
     inputVal: ""
   };
+
   initializeData = async callback => {
     const uid = firebase.auth().currentUser.uid;
     const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
@@ -65,6 +64,7 @@ export class RevCode extends Component {
       callback
     );
   };
+
   componentDidMount() {
     this.initializeData();
   }
@@ -81,28 +81,41 @@ export class RevCode extends Component {
     });
 
     this.setState({ userFile: tmp });
+    
+    const url ="https://revcode.herokuapp.com/loadfile?file_id="+fileId+"&uid="+this.state.userData.uid
+    axios.get(url).then(res=>{
+      this.setState({code:res.data.file_data.code})
+      console.log(res)
+      
+    }).catch(error=>{console.log(error.message)})
+
     /*firebase
       .database()
       .ref(
         "user/" + this.state.userData.uid + "/user_storage/" + fileId + "/code"
       )
       .once("value", data => {
-        this.setState({ code: data.val() });
+        console.log(data)
+        //this.setState({ code: data.val() });
       });*/
   };
 
   delFile = () => {
-    const tmp = [
-      ...this.state.userFile.filter(file => file.file_id !== this.state.fileId)
-    ];
-    this.setState({
-      modalOpen: false,
-      userFile: tmp,
-      fileId: "",
-      extension: "",
-      code: "",
-      fileName: ""
-    });
+    const data={uid:this.state.userData.uid,file_id:this.state.fileId}
+    axios.post("https://revcode.herokuapp.com/removefile",data).then(()=>{
+      const tmp = [
+        ...this.state.userFile.filter(file => file.file_id !== this.state.fileId)
+      ];
+      this.setState({
+        modalOpen: false,
+        userFile: tmp,
+        fileId: "",
+        extension: "",
+        code: "",
+        fileName: ""
+      });
+    }).catch(e=>{alert(e.message)})
+    
   };
 
   addFile = async () => {
@@ -123,22 +136,30 @@ export class RevCode extends Component {
     //console.log("#", res);
     await this.initializeData(() => {
       const fileId = res.data.file_id;
-      const tmp = [
-        ...this.state.userFile.map(key => {
-          if (key.file_id === fileId) {
-            this.setState({ extension: key.extension, fileName: key.filename });
-            return (key.active = true);
-          } else return (key.active = false);
-        })
-      ];
+      const tmp = [...this.state.userFile];
+      tmp.map(key => {
+        if (key.file_id === fileId) {
+          this.setState({ extension: key.extension, fileName: key.filename });
+          return (key.active = true);
+        } else return (key.active = false);
+      });
+
       //console.log("#", tmp);
-      this.setState({ fileId: res.data.file_id, modalAddOpen: false });
+      this.setState({
+        fileId: res.data.file_id,
+        modalAddOpen: false,
+        userFile: tmp
+      });
     });
-    //this.setState({ userFile: tmp });
+  };
+
+  codeEdit = code => {
+    //console.log(code)
+    this.setState({code:code})
   };
 
   render() {
-    console.log(this.state);
+    //console.log(this.state);
     return (
       <div>
         <Segment
@@ -177,7 +198,7 @@ export class RevCode extends Component {
         </Segment>
 
         <Segment vertical style={{ padding: "1em 0em" }}>
-          <Container fluid>
+          <Container>
             <Grid divided stackable style={{ minHeight: "90vh" }}>
               <Grid.Column width={3}>
                 <Grid.Row style={{ height: "98%" }}>
@@ -302,20 +323,9 @@ export class RevCode extends Component {
                   </Button.Group>
                 </Grid.Row>
               </Grid.Column>
-              <Grid.Column width={6}>
-                <Header as="h4" content="Speech" />
-              </Grid.Column>
 
-              <Grid.Column width={7}>
-                <Header as="h4" content="Code Display" />
-                <SyntaxHighlighter
-                  language={this.state.extension}
-                  style={atomDark}
-                  showLineNumbers={true}
-                  wrapLines={true}
-                >
-                  {this.state.code}
-                </SyntaxHighlighter>
+              <Grid.Column width={13}>
+                <Code CodeEdit={this.codeEdit} value={this.state.code}/>
               </Grid.Column>
             </Grid>
           </Container>

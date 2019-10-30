@@ -8,7 +8,7 @@ import RevCode from "./Components/RevCode";
 import HomepageLayout from "./Components/HomepageLayout";
 import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
-import Code from "./Code"
+
 const App = () => {
   return (
     <AuthProvider>
@@ -18,7 +18,6 @@ const App = () => {
           <PrivateRoute exact path="/main" component={RevCode} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />
-          <Route exact path="/code" component={Code} />
         </div>
       </Router>
     </AuthProvider>
