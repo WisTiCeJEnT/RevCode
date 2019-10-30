@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 //import { Container, Header, Menu, Icon } from "semantic-ui-react";
 //import Speech from "./Components/Speech";
 import Login from "./Components/Login";

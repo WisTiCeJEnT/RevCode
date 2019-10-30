@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/css/main.7d67f00d.chunk.css",
-    "main.js": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/js/main.38d3a340.chunk.js",
-    "main.js.map": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/js/main.38d3a340.chunk.js.map",
-    "runtime-main.js": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/js/runtime-main.29c8e270.js",
-    "runtime-main.js.map": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/js/runtime-main.29c8e270.js.map",
-    "static/js/2.2edbcf4a.chunk.js": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/js/2.2edbcf4a.chunk.js",
-    "static/js/2.2edbcf4a.chunk.js.map": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/js/2.2edbcf4a.chunk.js.map",
-    "index.html": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/index.html",
-    "precache-manifest.496b343bf012e8995ae8097087b86c2d.js": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/precache-manifest.496b343bf012e8995ae8097087b86c2d.js",
-    "service-worker.js": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/service-worker.js",
-    "static/css/main.7d67f00d.chunk.css.map": "/WisTiCeJEnT/RevCode/tree/master/RevCodeFrontend/static/css/main.7d67f00d.chunk.css.map"
+    "main.css": "/RevCode/static/css/main.ac084ba4.chunk.css",
+    "main.js": "/RevCode/static/js/main.b6af843d.chunk.js",
+    "main.js.map": "/RevCode/static/js/main.b6af843d.chunk.js.map",
+    "runtime-main.js": "/RevCode/static/js/runtime-main.83ab0119.js",
+    "runtime-main.js.map": "/RevCode/static/js/runtime-main.83ab0119.js.map",
+    "static/js/2.97aa7266.chunk.js": "/RevCode/static/js/2.97aa7266.chunk.js",
+    "static/js/2.97aa7266.chunk.js.map": "/RevCode/static/js/2.97aa7266.chunk.js.map",
+    "index.html": "/RevCode/index.html",
+    "precache-manifest.78fbf82b0e101a6c31059bec95937a30.js": "/RevCode/precache-manifest.78fbf82b0e101a6c31059bec95937a30.js",
+    "service-worker.js": "/RevCode/service-worker.js",
+    "static/css/main.ac084ba4.chunk.css.map": "/RevCode/static/css/main.ac084ba4.chunk.css.map"
   }
 }

@@ -34,39 +34,34 @@ const Language = [
   }
 ];
 
+
 export class RevCode extends Component {
   state = {
     fileId: "",
     fileName: "",
     extension: "",
     code: "",
-    userData: { name:"" , uid: "" },
+    userData: { name: "", uid: "" },
     userFile: [],
     modalOpen: false,
     modalAddOpen: false,
     dropVal: "Python",
     inputVal: ""
   };
-
-  initializeData = () => {
+  initializeData = async callback => {
     const uid = firebase.auth().currentUser.uid;
     const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
-    axios
+    const res = await axios
       .get(url)
-      .then(async res => {
-        this.setState({ userData: res.data.userData.user_data });
+      .then(res => res)
+      .catch(({ message }) => ({ is_error: true, message }));
 
-        //add active to each object in array
-        const tmp = [...res.data.userData.user_storage];
-        tmp.map(key => {
-          return (key.active = false);
-        });
+    if (res.is_error) return alert(res.message);
+    //add active to each object in array
+    const tmp = [...res.data.userData.user_storage];
+    tmp.map(key => (key.active = false));
 
-        this.setState({ userFile: tmp });
-      })
-      .catch(err => {
-        alert(err.message);
-      });
+    this.setState({ userData: res.data.userData.user_data, userFile: tmp },callback);
   };
   componentDidMount() {
     this.initializeData();
@@ -74,9 +69,7 @@ export class RevCode extends Component {
 
   setCurrentFile = (fileId, fileExt, fileName) => {
     const ex = fileExt.split(" ")[2].toLowerCase();
-    this.setState({ fileId: fileId });
-    this.setState({ extension: ex });
-    this.setState({ fileName: fileName });
+    this.setState({ fileId: fileId, extension: ex, fileName: fileName });
 
     //set active file
     const tmp = [...this.state.userFile];
@@ -99,12 +92,17 @@ export class RevCode extends Component {
     const tmp = [
       ...this.state.userFile.filter(file => file.file_id !== this.state.fileId)
     ];
-    this.setState({ modalOpen: false });
-    this.setState({ userFile: tmp });
-    this.setState({ fileId: "", extension: "", code: "", fileName: "" });
+    this.setState({
+      modalOpen: false,
+      userFile: tmp,
+      fileId: "",
+      extension: "",
+      code: "",
+      fileName: ""
+    });
   };
 
-  addFile = () => {
+  addFile = async () => {
     const data = {
       uid: this.state.userData.uid,
       filename:
@@ -113,13 +111,27 @@ export class RevCode extends Component {
         this.state.dropVal === "Python" ? "py - Python" : "js - Javascript"
     };
     //console.log('@',data)
-    axios.post("https://revcode.herokuapp.com/newfile", data).then(res => {
-      console.log("#", res);
-      this.initializeData();
+    const res = await axios
+      .post("https://revcode.herokuapp.com/newfile", data)
+      .then(res => res)
+      .catch(error => ({ is_error: true, error }));
 
-    }).catch(e=>{alert(e.message)});
-    this.setState({ modalAddOpen: false });
-    const tmp = [...this.state.userFile];
+    if (res.is_error) return alert(res.error);
+    //console.log("#", res);
+    await this.initializeData(()=>{
+      const fileId = res.data.file_id
+      const tmp = [
+        ...this.state.userFile.map(key => {
+          if (key.file_id === fileId) {
+            this.setState({ extension: key.extension, fileName: key.filename });
+            return (key.active = true);
+          } else return (key.active = false);
+        })
+      ];
+      console.log("#", tmp);
+      this.setState({ fileId: res.data.file_id, modalAddOpen: false })
+    });
+    //this.setState({ userFile: tmp });
   };
 
   render() {
