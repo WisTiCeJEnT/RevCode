@@ -17,7 +17,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import axios from "axios";
 import File from "./File";
-import Add from "./AddFile";
+
 
 const Language = [
   {
@@ -33,7 +33,6 @@ const Language = [
     icon: "js"
   }
 ];
-
 
 export class RevCode extends Component {
   state = {
@@ -61,7 +60,10 @@ export class RevCode extends Component {
     const tmp = [...res.data.userData.user_storage];
     tmp.map(key => (key.active = false));
 
-    this.setState({ userData: res.data.userData.user_data, userFile: tmp },callback);
+    this.setState(
+      { userData: res.data.userData.user_data, userFile: tmp },
+      callback
+    );
   };
   componentDidMount() {
     this.initializeData();
@@ -77,15 +79,16 @@ export class RevCode extends Component {
       if (key.file_id === fileId) return (key.active = true);
       else return (key.active = false);
     });
+
     this.setState({ userFile: tmp });
-    firebase
+    /*firebase
       .database()
       .ref(
         "user/" + this.state.userData.uid + "/user_storage/" + fileId + "/code"
       )
       .once("value", data => {
         this.setState({ code: data.val() });
-      });
+      });*/
   };
 
   delFile = () => {
@@ -118,8 +121,8 @@ export class RevCode extends Component {
 
     if (res.is_error) return alert(res.error);
     //console.log("#", res);
-    await this.initializeData(()=>{
-      const fileId = res.data.file_id
+    await this.initializeData(() => {
+      const fileId = res.data.file_id;
       const tmp = [
         ...this.state.userFile.map(key => {
           if (key.file_id === fileId) {
@@ -128,8 +131,8 @@ export class RevCode extends Component {
           } else return (key.active = false);
         })
       ];
-      console.log("#", tmp);
-      this.setState({ fileId: res.data.file_id, modalAddOpen: false })
+      //console.log("#", tmp);
+      this.setState({ fileId: res.data.file_id, modalAddOpen: false });
     });
     //this.setState({ userFile: tmp });
   };
