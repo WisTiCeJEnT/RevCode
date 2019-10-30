@@ -37,7 +37,7 @@ export class RevCode extends Component {
     fileId: "",
     fileName: "",
     extension: "",
-    code:"",
+    code: "",
     userData: { name: "", uid: "" },
     userFile: [],
     modalOpen: false,
@@ -81,13 +81,22 @@ export class RevCode extends Component {
     });
 
     this.setState({ userFile: tmp });
-    
-    const url ="https://revcode.herokuapp.com/loadfile?file_id="+fileId+"&uid="+this.state.userData.uid
-    axios.get(url).then(res=>{
-      this.setState({code:res.data.file_data.code})
-      console.log(res)
-      
-    }).catch(error=>{console.log(error.message)})
+
+    const url =
+      "https://revcode.herokuapp.com/loadfile?file_id=" +
+      fileId +
+      "&uid=" +
+      this.state.userData.uid;
+    axios
+      .get(url)
+      .then(res => {
+        console.log('#',res);
+        //this.setState({ code: res.data.file_data.code });
+        
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
 
     /*firebase
       .database()
@@ -101,21 +110,27 @@ export class RevCode extends Component {
   };
 
   delFile = () => {
-    const data={uid:this.state.userData.uid,file_id:this.state.fileId}
-    axios.post("https://revcode.herokuapp.com/removefile",data).then(()=>{
-      const tmp = [
-        ...this.state.userFile.filter(file => file.file_id !== this.state.fileId)
-      ];
-      this.setState({
-        modalOpen: false,
-        userFile: tmp,
-        fileId: "",
-        extension: "",
-        code: "",
-        fileName: ""
+    const data = { uid: this.state.userData.uid, file_id: this.state.fileId };
+    axios
+      .post("https://revcode.herokuapp.com/removefile", data)
+      .then(() => {
+        const tmp = [
+          ...this.state.userFile.filter(
+            file => file.file_id !== this.state.fileId
+          )
+        ];
+        this.setState({
+          modalOpen: false,
+          userFile: tmp,
+          fileId: "",
+          extension: "",
+          code: "",
+          fileName: ""
+        });
+      })
+      .catch(e => {
+        alert(e.message);
       });
-    }).catch(e=>{alert(e.message)})
-    
   };
 
   addFile = async () => {
@@ -155,8 +170,12 @@ export class RevCode extends Component {
 
   codeEdit = code => {
     //console.log(code)
-    this.setState({code:code})
+    this.setState({ code: code });
   };
+
+  saveFile = () =>{
+    
+  }
 
   render() {
     //console.log(this.state);
@@ -212,7 +231,11 @@ export class RevCode extends Component {
                   </List>
                 </Grid.Row>
                 <Grid.Row style={{ height: "2%" }}>
+                <Button.Group compact size="mini" floated="left" basic>
+                  <Button icon="save" onClick={this.saveFile}/>
+                </Button.Group>
                   <Button.Group compact size="mini" floated="right" basic>
+                  
                     <Modal
                       size="mini"
                       trigger={
@@ -325,7 +348,7 @@ export class RevCode extends Component {
               </Grid.Column>
 
               <Grid.Column width={13}>
-                <Code CodeEdit={this.codeEdit} value={this.state.code}/>
+                <Code CodeEdit={this.codeEdit} value={this.state.code} />
               </Grid.Column>
             </Grid>
           </Container>
