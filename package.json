@@ -2,7 +2,7 @@
   "name": "speechreg",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://WisTiCeJEnT.github.io/RevCode/",
+  "homepage": "https://wisticejent.github.io/RevCode/",
   "dependencies": {
     "axios": "^0.19.0",
     "firebase": "^7.1.0",
