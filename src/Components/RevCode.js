@@ -90,9 +90,17 @@ export class RevCode extends Component {
     axios
       .get(url)
       .then(res => {
-        console.log('#',res);
-        //this.setState({ code: res.data.file_data.code });
-        
+        const code = res.data.file_data.code;
+        const indent = res.data.file_data.indent;
+        let result = "";
+        code.map(
+          (c, index) =>
+            index !== code.length - 1
+              ? (result += "\t".repeat(indent[index]) + c + "\n")
+              : (result += "\t".repeat(indent[index]) + c)
+          //console.log(res)
+        );
+        this.setState({ code: result });
       })
       .catch(error => {
         console.log(error.message);
@@ -169,16 +177,45 @@ export class RevCode extends Component {
   };
 
   codeEdit = code => {
-    //console.log(code)
     this.setState({ code: code });
   };
 
-  saveFile = () =>{
-    
-  }
+  saveFile = () => {
+    const code = this.state.code.split("\n");
+    let res = [];
+    let indent = [];
+
+    code.forEach(c => {
+      res.push(c);
+      let count = 0;
+      for (let i = 0; i < c.length; i++) {
+        if (c[i] !== "\t") {
+          indent.push(count);
+          break;
+        } else count += 1;
+      }
+    });
+
+    const url = "https://revcode.herokuapp.com/savefile";
+    const data = {
+      uid: this.state.userData.uid,
+      file_id: this.state.fileId,
+      code: res,
+      filename: this.state.fileName,
+      extension:this.state.extension === "python" ? "py - Python" : "js - Javascript",
+      indent: indent
+    };
+    console.log(data)
+    axios
+      .post(url, data)
+      .then(alert("Successfully saved " + this.state.fileName))
+      .catch(error => {
+        alert(error.message);
+      });
+  };
 
   render() {
-    //console.log(this.state);
+    console.log(this.state);
     return (
       <div>
         <Segment
@@ -231,11 +268,10 @@ export class RevCode extends Component {
                   </List>
                 </Grid.Row>
                 <Grid.Row style={{ height: "2%" }}>
-                <Button.Group compact size="mini" floated="left" basic>
-                  <Button icon="save" onClick={this.saveFile}/>
-                </Button.Group>
+                  <Button.Group compact size="mini" floated="left" basic>
+                    <Button icon="save" onClick={this.saveFile} />
+                  </Button.Group>
                   <Button.Group compact size="mini" floated="right" basic>
-                  
                     <Modal
                       size="mini"
                       trigger={
