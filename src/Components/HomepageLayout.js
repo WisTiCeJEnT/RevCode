@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { Component, useContext } from "react";
+import React, { Component, useContext  } from "react";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -16,6 +16,8 @@ import {
 } from "semantic-ui-react";
 import { AuthContext } from "./../Auth";
 import { Redirect } from "react-router";
+
+
 
 const getWidth = () => {
   const isSSR = typeof window === "undefined";

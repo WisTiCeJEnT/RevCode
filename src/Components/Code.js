@@ -43,6 +43,7 @@ export class Code extends Component {
         fontSize={18}
         value={this.props.value}
         
+        
       />
     );
   }

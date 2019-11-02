@@ -36,6 +36,7 @@ export class Speech extends Component {
             let transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
               finalTranscript += transcript;
+              
             } else {
               interimTranscript += transcript;
             }

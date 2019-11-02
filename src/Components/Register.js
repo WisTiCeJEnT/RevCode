@@ -67,7 +67,8 @@ const Register = ({ history }) => {
             await axios
               .post("https://revcode.herokuapp.com/adduser", {
                 uid: response.user.uid,
-                name: username.value
+                name: username.value,
+                email: email.values
               })
               .then(res => {
                 setLoad({loading:false})

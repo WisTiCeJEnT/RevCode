@@ -26,6 +26,7 @@ export class File extends Component {
           size="large"
           verticalAlign="middle"
           color={file.active?"green":null}
+          loading={this.props.loadIcon}
         />
         <List.Content>
           <List.Header as="a">{file.filename}</List.Header>

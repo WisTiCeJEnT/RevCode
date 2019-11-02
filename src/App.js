@@ -9,6 +9,7 @@ import HomepageLayout from "./Components/HomepageLayout";
 import { AuthProvider } from "./Auth";
 import PrivateRoute from "./PrivateRoute";
 
+
 const App = () => {
   return (
     <AuthProvider>

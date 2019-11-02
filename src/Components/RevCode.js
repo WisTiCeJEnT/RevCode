@@ -10,27 +10,18 @@ import {
   List,
   Button,
   Modal,
-  Input
+  Input,
+  Dimmer,
+  Loader,
+  Message
 } from "semantic-ui-react";
 import firebase from "./../FirebaseAPI";
 import axios from "axios";
 import File from "./File";
 import Code from "./Code";
-
-const Language = [
-  {
-    key: "1",
-    text: "Python",
-    value: "Python",
-    icon: "python"
-  },
-  {
-    key: "2",
-    text: "Javascript",
-    value: "Javascript",
-    icon: "js"
-  }
-];
+import recognition from "./Recognition";
+import Language from "./Language";
+import "./../Style/Mic.css";
 
 export class RevCode extends Component {
   state = {
@@ -38,13 +29,22 @@ export class RevCode extends Component {
     fileName: "",
     extension: "",
     code: "",
+    indent: [],
     userData: { name: "", uid: "" },
     userFile: [],
     modalOpen: false,
     modalAddOpen: false,
     dropVal: "Python",
-    inputVal: ""
+    inputVal: "",
+    pressed: false,
+    text: "",
+    codeLoader: false,
+    addLoader: false,
+    delLoader: false,
+    warning: true
   };
+  finalTranscript = "";
+  prevState = "";
 
   initializeData = async callback => {
     const uid = firebase.auth().currentUser.uid;
@@ -71,7 +71,12 @@ export class RevCode extends Component {
 
   setCurrentFile = (fileId, fileExt, fileName) => {
     const ex = fileExt.split(" ")[2].toLowerCase();
-    this.setState({ fileId: fileId, extension: ex, fileName: fileName });
+    this.setState({
+      fileId: fileId,
+      extension: ex,
+      fileName: fileName,
+      codeLoader: true
+    });
 
     //set active file
     const tmp = [...this.state.userFile];
@@ -92,13 +97,12 @@ export class RevCode extends Component {
       .then(res => {
         const code = res.data.file_data.code;
         const indent = res.data.file_data.indent;
+        this.setState({ indent: indent, codeLoader: false });
         let result = "";
-        code.map(
-          (c, index) =>
-            index !== code.length - 1
-              ? (result += "\t".repeat(indent[index]) + c + "\n")
-              : (result += "\t".repeat(indent[index]) + c)
-          //console.log(res)
+        code.map((c, index) =>
+          index !== code.length - 1
+            ? (result += "\t".repeat(indent[index]) + c + "\n")
+            : (result += "\t".repeat(indent[index]) + c)
         );
         this.setState({ code: result });
       })
@@ -118,6 +122,7 @@ export class RevCode extends Component {
   };
 
   delFile = () => {
+    this.setState({ delLoader: true });
     const data = { uid: this.state.userData.uid, file_id: this.state.fileId };
     axios
       .post("https://revcode.herokuapp.com/removefile", data)
@@ -133,7 +138,8 @@ export class RevCode extends Component {
           fileId: "",
           extension: "",
           code: "",
-          fileName: ""
+          fileName: "",
+          delLoader: false
         });
       })
       .catch(e => {
@@ -142,6 +148,7 @@ export class RevCode extends Component {
   };
 
   addFile = async () => {
+    this.setState({ addLoader: true });
     const data = {
       uid: this.state.userData.uid,
       filename:
@@ -162,7 +169,11 @@ export class RevCode extends Component {
       const tmp = [...this.state.userFile];
       tmp.map(key => {
         if (key.file_id === fileId) {
-          this.setState({ extension: key.extension, fileName: key.filename });
+          this.setState({
+            extension: key.extension,
+            fileName: key.filename,
+            addLoader: false
+          });
           return (key.active = true);
         } else return (key.active = false);
       });
@@ -171,7 +182,8 @@ export class RevCode extends Component {
       this.setState({
         fileId: res.data.file_id,
         modalAddOpen: false,
-        userFile: tmp
+        userFile: tmp,
+        code: ""
       });
     });
   };
@@ -202,10 +214,12 @@ export class RevCode extends Component {
       file_id: this.state.fileId,
       code: res,
       filename: this.state.fileName,
-      extension:this.state.extension === "python" ? "py - Python" : "js - Javascript",
+      extension:
+        this.state.extension === "python" ? "py - Python" : "js - Javascript",
       indent: indent
     };
-    console.log(data)
+
+    //console.log(data);
     axios
       .post(url, data)
       .then(alert("Successfully saved " + this.state.fileName))
@@ -214,8 +228,66 @@ export class RevCode extends Component {
       });
   };
 
+  Record = () => {
+    try {
+      this.setState({ pressed: !this.state.pressed }, () => {
+        if (
+          this.state.pressed &&
+          window.hasOwnProperty("webkitSpeechRecognition")
+        ) {
+          recognition.onresult = event => {
+            let interimTranscript = "";
+            for (
+              let i = event.resultIndex, len = event.results.length;
+              i < len;
+              i++
+            ) {
+              let transcript = event.results[i][0].transcript;
+              if (event.results[i].isFinal) {
+                this.finalTranscript += transcript;
+                const data = {
+                  uid: this.state.userData.uid,
+                  file_id: this.state.fileId,
+                  indent: 0,
+                  line_no: 0,
+                  raw_text: this.finalTranscript
+                };
+
+                axios
+                  .post("https://revcode.herokuapp.com/speech", data)
+                  .then(res => {
+                    console.log("@", this.finalTranscript);
+                    console.log(res);
+                    this.finalTranscript = "";
+                    this.setState({
+                      code: this.state.code.concat("\n" + res.data.code)
+                    });
+                  })
+                  .catch(error => {
+                    alert(error.message);
+                  });
+              } else {
+                interimTranscript += transcript;
+                console.log("#", interimTranscript);
+              }
+            }
+
+            // this.setState({ text:this.finalTranscript+interimTranscript},()=>{
+            //   this.setState({code:this.state.code.concat("\n"+"#"+this.state.text)})
+            // });
+          };
+          recognition.start();
+        } else {
+          recognition.stop();
+        }
+      });
+    } catch {
+      this.setState({ pressed: !this.state.pressed });
+    }
+  };
+
   render() {
-    console.log(this.state);
+    //console.log(this.state);
     return (
       <div>
         <Segment
@@ -257,7 +329,7 @@ export class RevCode extends Component {
           <Container>
             <Grid divided stackable style={{ minHeight: "90vh" }}>
               <Grid.Column width={3}>
-                <Grid.Row style={{ height: "98%" }}>
+                <Grid.Row style={{ height: "88%" }}>
                   <Header as="h4" content="Files" />
 
                   <List divided relaxed animated selection>
@@ -266,8 +338,33 @@ export class RevCode extends Component {
                       setCurrentFile={this.setCurrentFile}
                     />
                   </List>
+                  <Container textAlign="center" style={{ marginTop: "4em" }}>
+                    <Button
+                      circular
+                      icon
+                      color="red"
+                      onClick={this.Record}
+                      inverted={!this.state.pressed}
+                      className={this.state.pressed ?"Rec":null}
+                      
+                    >
+                      <Icon
+                        name={!this.state.pressed ? "microphone" : "circle"}
+                        size="big"
+                      />
+                    </Button>
+                  </Container>
                 </Grid.Row>
-                <Grid.Row style={{ height: "2%" }}>
+                <Grid.Row style={{ height: "6%" }}>
+                  <Message
+                    hidden={this.state.warning}
+                    error
+                    style={{ padding: "0.3em 0.1em", textAlign: "center" }}
+                  >
+                    Choose file to delete!
+                  </Message>
+                </Grid.Row>
+                <Grid.Row style={{ height: "6%" }}>
                   <Button.Group compact size="mini" floated="left" basic>
                     <Button icon="save" onClick={this.saveFile} />
                   </Button.Group>
@@ -329,7 +426,11 @@ export class RevCode extends Component {
                         >
                           <Icon name="remove" /> Cancel
                         </Button>
-                        <Button color="green" onClick={this.addFile}>
+                        <Button
+                          color="green"
+                          onClick={this.addFile}
+                          loading={this.state.addLoader}
+                        >
                           <Icon name="checkmark" /> Add
                         </Button>
                       </Modal.Actions>
@@ -341,7 +442,12 @@ export class RevCode extends Component {
                           onClick={() => {
                             if (this.state.fileId !== "")
                               this.setState({ modalOpen: true });
-                            else alert("Choose your file to delete");
+                            else
+                              this.setState({ warning: false }, () => {
+                                setTimeout(() => {
+                                  this.setState({ warning: true });
+                                }, 2000);
+                              });
                           }}
                         >
                           <Icon name="minus" />
@@ -374,7 +480,12 @@ export class RevCode extends Component {
                         >
                           <Icon name="remove" /> No
                         </Button>
-                        <Button color="green" inverted onClick={this.delFile}>
+                        <Button
+                          color="green"
+                          inverted
+                          onClick={this.delFile}
+                          loading={this.state.delLoader}
+                        >
                           <Icon name="checkmark" /> Yes
                         </Button>
                       </Modal.Actions>
@@ -384,7 +495,17 @@ export class RevCode extends Component {
               </Grid.Column>
 
               <Grid.Column width={13}>
-                <Code CodeEdit={this.codeEdit} value={this.state.code} />
+                <Dimmer.Dimmable
+                  as="div"
+                  blurring
+                  style={{ height: "100%", width: "100%" }}
+                  dimmed={this.state.codeLoader}
+                >
+                  <Dimmer active={this.state.codeLoader}>
+                    <Loader size="massive" />
+                  </Dimmer>
+                  <Code CodeEdit={this.codeEdit} value={this.state.code} />
+                </Dimmer.Dimmable>
               </Grid.Column>
             </Grid>
           </Container>
