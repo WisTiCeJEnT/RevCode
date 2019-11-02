@@ -41,12 +41,14 @@ export class RevCode extends Component {
     codeLoader: false,
     addLoader: false,
     delLoader: false,
+    fileLoader: false,
     warning: true
   };
   finalTranscript = "";
   prevState = "";
 
   initializeData = async callback => {
+    this.setState({fileLoader:true})
     const uid = firebase.auth().currentUser.uid;
     const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
     const res = await axios
@@ -60,7 +62,7 @@ export class RevCode extends Component {
     tmp.map(key => (key.active = false));
 
     this.setState(
-      { userData: res.data.userData.user_data, userFile: tmp },
+      { userData: res.data.userData.user_data, userFile: tmp,fileLoader:false },
       callback
     );
   };
@@ -330,7 +332,19 @@ export class RevCode extends Component {
             <Grid divided stackable style={{ minHeight: "90vh" }}>
               <Grid.Column width={3}>
                 <Grid.Row style={{ height: "88%" }}>
-                  <Header as="h4" content="Files" />
+                  <Header as="h4">
+                    {!this.state.fileLoader ? (
+                      <Icon name="folder" link />
+                    ) : (
+                      <Loader
+                        active
+                        inline
+                        size="mini"
+                        style={{ marginRight: "0.5em", marginTop: "-0.3em" }}
+                      />
+                    )}
+                    <Header.Content>Files</Header.Content>
+                  </Header>
 
                   <List divided relaxed animated selection>
                     <File
@@ -345,8 +359,7 @@ export class RevCode extends Component {
                       color="red"
                       onClick={this.Record}
                       inverted={!this.state.pressed}
-                      className={this.state.pressed ?"Rec":null}
-                      
+                      className={this.state.pressed ? "Rec" : null}
                     >
                       <Icon
                         name={!this.state.pressed ? "microphone" : "circle"}
