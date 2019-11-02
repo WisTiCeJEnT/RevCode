@@ -42,7 +42,9 @@ export class RevCode extends Component {
     addLoader: false,
     delLoader: false,
     fileLoader: false,
-    warning: true
+    warning: true,
+    warningSave: true,
+    ErrPos:''
   };
   finalTranscript = "";
   prevState = "";
@@ -224,7 +226,11 @@ export class RevCode extends Component {
     //console.log(data);
     axios
       .post(url, data)
-      .then(alert("Successfully saved " + this.state.fileName))
+      .then(this.setState({ warning: false , ErrPos:'Pos' }, () => {
+        setTimeout(() => {
+          this.setState({ warning: true , ErrPos:'' });
+        }, 2000);
+      }))
       .catch(error => {
         alert(error.message);
       });
@@ -370,12 +376,15 @@ export class RevCode extends Component {
                 </Grid.Row>
                 <Grid.Row style={{ height: "6%" }}>
                   <Message
+                    positive={this.state.ErrPos==='Pos'?true:false}
                     hidden={this.state.warning}
-                    error
+                    error={this.state.ErrPos==='Err'?true:false}
                     style={{ padding: "0.3em 0.1em", textAlign: "center" }}
                   >
-                    Choose file to delete!
+                    {this.state.ErrPos==='Err'?"Choose file to delete!":"Successfully saved"}
+                    
                   </Message>
+                  
                 </Grid.Row>
                 <Grid.Row style={{ height: "6%" }}>
                   <Button.Group compact size="mini" floated="left" basic>
@@ -456,9 +465,9 @@ export class RevCode extends Component {
                             if (this.state.fileId !== "")
                               this.setState({ modalOpen: true });
                             else
-                              this.setState({ warning: false }, () => {
+                              this.setState({ warning: false , ErrPos:'Err' }, () => {
                                 setTimeout(() => {
-                                  this.setState({ warning: true });
+                                  this.setState({ warning: true , ErrPos:'' });
                                 }, 2000);
                               });
                           }}
