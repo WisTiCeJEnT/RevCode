@@ -38,19 +38,19 @@ export class RevCode extends Component {
     inputVal: "",
     pressed: false,
     text: "",
-    codeLoader: false,
+    codeLoader: true,
     addLoader: false,
     delLoader: false,
     fileLoader: false,
+    saveLoader: false,
     warning: true,
-    warningSave: true,
-    ErrPos:''
+    ErrPos: ""
   };
   finalTranscript = "";
   prevState = "";
 
   initializeData = async callback => {
-    this.setState({fileLoader:true})
+    this.setState({ fileLoader: true });
     const uid = firebase.auth().currentUser.uid;
     const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
     const res = await axios
@@ -64,7 +64,11 @@ export class RevCode extends Component {
     tmp.map(key => (key.active = false));
 
     this.setState(
-      { userData: res.data.userData.user_data, userFile: tmp,fileLoader:false },
+      {
+        userData: res.data.userData.user_data,
+        userFile: tmp,
+        fileLoader: false
+      },
       callback
     );
   };
@@ -200,7 +204,7 @@ export class RevCode extends Component {
     const code = this.state.code.split("\n");
     let res = [];
     let indent = [];
-
+    this.setState({ saveLoader: true });
     code.forEach(c => {
       res.push(c);
       let count = 0;
@@ -226,11 +230,16 @@ export class RevCode extends Component {
     //console.log(data);
     axios
       .post(url, data)
-      .then(this.setState({ warning: false , ErrPos:'Pos' }, () => {
-        setTimeout(() => {
-          this.setState({ warning: true , ErrPos:'' });
-        }, 2000);
-      }))
+      .then(
+        this.setState(
+          { warning: false, ErrPos: "Pos", saveLoader: false },
+          () => {
+            setTimeout(() => {
+              this.setState({ warning: true, ErrPos: "" });
+            }, 2000);
+          }
+        )
+      )
       .catch(error => {
         alert(error.message);
       });
@@ -376,19 +385,38 @@ export class RevCode extends Component {
                 </Grid.Row>
                 <Grid.Row style={{ height: "6%" }}>
                   <Message
-                    positive={this.state.ErrPos==='Pos'?true:false}
+                    positive={this.state.ErrPos === "Pos" ? true : false}
                     hidden={this.state.warning}
-                    error={this.state.ErrPos==='Err'?true:false}
+                    error={this.state.ErrPos === "Err" ? true : false}
                     style={{ padding: "0.3em 0.1em", textAlign: "center" }}
                   >
-                    {this.state.ErrPos==='Err'?"Choose file to delete!":"Successfully saved"}
-                    
+                    {this.state.ErrPos === "Err"
+                      ? "Choose your file!"
+                      : "Successfully saved"}
                   </Message>
-                  
                 </Grid.Row>
                 <Grid.Row style={{ height: "6%" }}>
                   <Button.Group compact size="mini" floated="left" basic>
-                    <Button icon="save" onClick={this.saveFile} />
+                    <Button
+                      loading={this.state.saveLoader}
+                      icon="save"
+                      onClick={() => {
+                        if (this.state.fileId !== "") this.saveFile();
+                        else {
+                          this.setState(
+                            { warning: false, ErrPos: "Err" },
+                            () => {
+                              setTimeout(() => {
+                                this.setState({
+                                  warning: true,
+                                  ErrPos: ""
+                                });
+                              }, 2000);
+                            }
+                          );
+                        }
+                      }}
+                    />
                   </Button.Group>
                   <Button.Group compact size="mini" floated="right" basic>
                     <Modal
@@ -465,11 +493,17 @@ export class RevCode extends Component {
                             if (this.state.fileId !== "")
                               this.setState({ modalOpen: true });
                             else
-                              this.setState({ warning: false , ErrPos:'Err' }, () => {
-                                setTimeout(() => {
-                                  this.setState({ warning: true , ErrPos:'' });
-                                }, 2000);
-                              });
+                              this.setState(
+                                { warning: false, ErrPos: "Err" },
+                                () => {
+                                  setTimeout(() => {
+                                    this.setState({
+                                      warning: true,
+                                      ErrPos: ""
+                                    });
+                                  }, 2000);
+                                }
+                              );
                           }}
                         >
                           <Icon name="minus" />
@@ -524,7 +558,14 @@ export class RevCode extends Component {
                   dimmed={this.state.codeLoader}
                 >
                   <Dimmer active={this.state.codeLoader}>
-                    <Loader size="massive" />
+                    {this.state.fileId ? (
+                      <Loader size="massive" />
+                    ) : (
+                      <Header as="h2" icon inverted>
+                        <Icon name="file" style={{padding:"0.5em"}}/>
+                        Choose file or Add new file
+                      </Header>
+                    )}
                   </Dimmer>
                   <Code CodeEdit={this.codeEdit} value={this.state.code} />
                 </Dimmer.Dimmable>
