@@ -262,6 +262,7 @@ export class RevCode extends Component {
             ) {
               let transcript = event.results[i][0].transcript;
               if (event.results[i].isFinal) {
+                this.setState({fileLoader:true})
                 this.finalTranscript += transcript;
                 const data = {
                   uid: this.state.userData.uid,
@@ -279,7 +280,7 @@ export class RevCode extends Component {
                     this.finalTranscript = "";
                     this.setState({
                       code: this.state.code.concat("\n" + res.data.code)
-                    });
+                    ,fileLoader:false});
                   })
                   .catch(error => {
                     alert(error.message);
@@ -397,10 +398,11 @@ export class RevCode extends Component {
                   </Message>
                 </Grid.Row>
                 <Grid.Row style={{ height: "6%" }}>
-                  <Button.Group compact size="mini" floated="left" basic>
+                  <Button.Group compact size="mini" floated="left" inverted>
                     <Button
+                      color="teal"
                       loading={this.state.saveLoader}
-                      icon="save"
+                      content="Save"
                       onClick={() => {
                         if (this.state.fileId !== "") this.saveFile();
                         else {

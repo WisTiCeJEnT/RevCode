@@ -4,10 +4,10 @@ import { List } from "semantic-ui-react";
 export class File extends Component {
   
   iconCheck(file) {
-    if (file === "py - Python") {
+    if (file === "py - Python" || file === "py - python" || file === "py" || file === "python" || file ==="Python") {
       return "python";
     }
-    if (file === "js - Javascript") {
+    if (file === "js - Javascript"  ) {
       return "js";
     }
   }
