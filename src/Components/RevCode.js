@@ -50,7 +50,7 @@ export class RevCode extends Component {
   prevState = "";
 
   initializeData = async callback => {
-    this.setState({ fileLoader: true });
+    this.setState({ fileLoader: true , fileId: "Default", });
     const uid = firebase.auth().currentUser.uid;
     const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
     const res = await axios
@@ -67,7 +67,8 @@ export class RevCode extends Component {
       {
         userData: res.data.userData.user_data,
         userFile: tmp,
-        fileLoader: false
+        fileLoader: false,
+        fileId: "",
       },
       callback
     );
@@ -83,7 +84,7 @@ export class RevCode extends Component {
       fileId: fileId,
       extension: ex,
       fileName: fileName,
-      codeLoader: true
+      codeLoader: true,
     });
 
     //set active file
@@ -554,7 +555,7 @@ export class RevCode extends Component {
                 <Dimmer.Dimmable
                   as="div"
                   blurring
-                  style={{ height: "100%", width: "100%" }}
+                  style={{ height: "90vh", width: "100%"}}
                   dimmed={this.state.codeLoader}
                 >
                   <Dimmer active={this.state.codeLoader}>
@@ -562,7 +563,7 @@ export class RevCode extends Component {
                       <Loader size="massive" />
                     ) : (
                       <Header as="h2" icon inverted>
-                        <Icon name="file" style={{padding:"0.5em"}}/>
+                        <Icon name="file" style={{ padding: "0.5em" }} />
                         Choose file or Add new file
                       </Header>
                     )}
