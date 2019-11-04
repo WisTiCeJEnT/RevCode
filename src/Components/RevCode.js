@@ -205,9 +205,10 @@ export class RevCode extends Component {
       tmp.map(key => {
         if (key.file_id === fileId) {
           this.setState({
-            extension: key.extension,
+            extension: "python",
             fileName: key.filename,
-            addLoader: false
+            addLoader: false,
+            codeLoader: false
           });
           return (key.active = true);
         } else return (key.active = false);
