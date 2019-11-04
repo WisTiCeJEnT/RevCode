@@ -10,6 +10,10 @@ export class File extends Component {
     if (file === "js - Javascript"  ) {
       return "js";
     }
+    if (file === "txt - Text file" || file === "txt - text file" || file === "txt"  ) {
+      return "file text";
+    }
+    
   }
   render() {
     return this.props.data.map(file => (

@@ -44,34 +44,54 @@ export class RevCode extends Component {
     fileLoader: false,
     saveLoader: false,
     warning: true,
-    ErrPos: ""
+    ErrPos: "",
+    howtoFile: ""
   };
   finalTranscript = "";
   prevState = "";
 
   initializeData = async callback => {
-    this.setState({ fileLoader: true , fileId: "Default", });
+    this.setState({ fileLoader: true, fileId: "Default" });
     const uid = firebase.auth().currentUser.uid;
+    //console.log('#',uid)
     const url = "https://revcode.herokuapp.com/userdata?uid=" + uid;
     const res = await axios
       .get(url)
       .then(res => res)
       .catch(({ message }) => ({ is_error: true, message }));
-
+    //console.log('#',res)
     if (res.is_error) return alert(res.message);
     //add active to each object in array
-    const tmp = [...res.data.userData.user_storage];
-    tmp.map(key => (key.active = false));
+    //console.log('#',res)
+    try {
+      const tmp = [...res.data.userData.user_storage];
+      tmp.forEach(key => {
+        key.active = false;
+        if (key.filename === "HowTo.txt") {
+          this.setState({ howtoFile: key.file_id });
+        }
+      });
 
-    this.setState(
-      {
-        userData: res.data.userData.user_data,
-        userFile: tmp,
-        fileLoader: false,
-        fileId: "",
-      },
-      callback
-    );
+      this.setState(
+        {
+          userData: res.data.userData.user_data,
+          userFile: tmp,
+          fileLoader: false,
+          fileId: ""
+        },
+        callback
+      );
+    } catch {
+      this.setState(
+        {
+          userData: "Default",
+          userFile: [],
+          fileLoader: false,
+          fileId: ""
+        },
+        callback
+      );
+    }
   };
 
   componentDidMount() {
@@ -79,12 +99,14 @@ export class RevCode extends Component {
   }
 
   setCurrentFile = (fileId, fileExt, fileName) => {
-    const ex = fileExt.split(" ")[2].toLowerCase();
+    let ex = "python";
+    if (fileExt === "txt - Text file") ex = "file text";
+
     this.setState({
       fileId: fileId,
       extension: ex,
       fileName: fileName,
-      codeLoader: true,
+      codeLoader: true
     });
 
     //set active file
@@ -105,17 +127,21 @@ export class RevCode extends Component {
       .get(url)
       .then(res => {
         const code = res.data.file_data.code;
+        //console.log(res)
         const indent = res.data.file_data.indent;
         this.setState({ indent: indent, codeLoader: false });
         let result = "";
-        code.map((c, index) =>
-          index !== code.length - 1
-            ? (result += "\t".repeat(indent[index]) + c + "\n")
-            : (result += "\t".repeat(indent[index]) + c)
-        );
+        code.map((c, index) => {
+          if (index !== code.length - 1) {
+            return (result += "\t".repeat(indent[index]) + c + "\n");
+          } else {
+            return (result += "\t".repeat(indent[index]) + c);
+          }
+        });
         this.setState({ code: result });
       })
       .catch(error => {
+        this.setState({ code: "" });
         console.log(error.message);
       });
 
@@ -224,7 +250,7 @@ export class RevCode extends Component {
       code: res,
       filename: this.state.fileName,
       extension:
-        this.state.extension === "python" ? "py - Python" : "js - Javascript",
+        this.state.extension === "python" ? "py - Python" : "txt - Text file",
       indent: indent
     };
 
@@ -262,7 +288,7 @@ export class RevCode extends Component {
             ) {
               let transcript = event.results[i][0].transcript;
               if (event.results[i].isFinal) {
-                this.setState({fileLoader:true})
+                this.setState({ fileLoader: true });
                 this.finalTranscript += transcript;
                 const data = {
                   uid: this.state.userData.uid,
@@ -279,8 +305,9 @@ export class RevCode extends Component {
                     console.log(res);
                     this.finalTranscript = "";
                     this.setState({
-                      code: this.state.code.concat("\n" + res.data.code)
-                    ,fileLoader:false});
+                      code: this.state.code.concat("\n" + res.data.code),
+                      fileLoader: false
+                    });
                   })
                   .catch(error => {
                     alert(error.message);
@@ -303,6 +330,13 @@ export class RevCode extends Component {
     } catch {
       this.setState({ pressed: !this.state.pressed });
     }
+  };
+
+  messageCheck = () => {
+    if (this.state.ErrPos === "Err") return "Choose your file!";
+    else if (this.state.ErrPos === "Pos") return "Successfully saved";
+    else if (this.state.ErrPos === "Init")
+      return "Cannot delete this file!";
   };
 
   render() {
@@ -389,12 +423,15 @@ export class RevCode extends Component {
                   <Message
                     positive={this.state.ErrPos === "Pos" ? true : false}
                     hidden={this.state.warning}
-                    error={this.state.ErrPos === "Err" ? true : false}
+                    error={
+                      this.state.ErrPos === "Err" ||
+                      this.state.ErrPos === "Init"
+                        ? true
+                        : false
+                    }
                     style={{ padding: "0.3em 0.1em", textAlign: "center" }}
                   >
-                    {this.state.ErrPos === "Err"
-                      ? "Choose your file!"
-                      : "Successfully saved"}
+                    {this.messageCheck()}
                   </Message>
                 </Grid.Row>
                 <Grid.Row style={{ height: "6%" }}>
@@ -493,9 +530,21 @@ export class RevCode extends Component {
                         <Button
                           icon
                           onClick={() => {
-                            if (this.state.fileId !== "")
+                            if (this.state.fileId !== "" && this.state.fileId!==this.state.howtoFile)
                               this.setState({ modalOpen: true });
-                            else
+                            else if (this.state.fileId===this.state.howtoFile) {
+                              this.setState(
+                                { warning: false, ErrPos: "Init" },
+                                () => {
+                                  setTimeout(() => {
+                                    this.setState({
+                                      warning: true,
+                                      ErrPos: ""
+                                    });
+                                  }, 2000);
+                                }
+                              );
+                            } else
                               this.setState(
                                 { warning: false, ErrPos: "Err" },
                                 () => {
@@ -557,7 +606,7 @@ export class RevCode extends Component {
                 <Dimmer.Dimmable
                   as="div"
                   blurring
-                  style={{ height: "90vh", width: "100%"}}
+                  style={{ height: "90vh", width: "100%" }}
                   dimmed={this.state.codeLoader}
                 >
                   <Dimmer active={this.state.codeLoader}>
