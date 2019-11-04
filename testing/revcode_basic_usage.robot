@@ -2,6 +2,7 @@
 Library    Selenium2Library
 Library    BuiltIn
 Library    String
+Test Teardown    Close Browser
 Suite Teardown     Close All Browsers
 
 *** Variable ***
@@ -66,8 +67,23 @@ Text Should Be Visible
 
 
 *** Test Cases ***
+Signup - Bad Password
+    [tags]  Fail
+    Open Browser    about:blank    chrome
+    Go To                                   ${url}
+    Verify page title                       ${title}
+    Maximize Browser Window
+    Element Should Be Visible               ${signup_btn}
+    Click Button                            ${signup_btn}
+    Input Signup Info                       ${username_success}  ${email_success}  "pass"  "pas"
+    Click Button                            ${signup_btn}
+    Text Should Be Visible                  Your password and confirm password don't match
+    Input Signup Info                       ${username_success}  ${email_success}  "pas"  "pas"
+    Click Button                            ${signup_btn}
+    Text Should Be Visible                  Password should be at least 6 characters
+
 Signup - Success
-    [tags]  success
+    [tags]  Success
     Open Browser    about:blank    chrome
     Go To                                   ${url}
     Verify page title                       ${title}
@@ -78,8 +94,20 @@ Signup - Success
     Click Button                            ${signup_btn}
     Alert Should Be Present                 Successfully Registered
 
+Signup - Used Email
+    [tags]  Fail
+    Open Browser    about:blank    chrome
+    Go To                                   ${url}
+    Verify page title                       ${title}
+    Maximize Browser Window
+    Element Should Be Visible               ${signup_btn}
+    Click Button                            ${signup_btn}
+    Input Signup Info                       ${username_success}  ${email_success}  ${password_success}  ${password_success}
+    Click Button                            ${signup_btn}
+    Text Should Be Visible                  The email address is already in use by another account.
+
 Login - Success
-    [tags]  success
+    [tags]  Success
     Open Browser    about:blank    chrome
     Go To                                   ${url}
     Verify page title                       ${title}
