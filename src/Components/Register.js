@@ -63,7 +63,7 @@ const Register = ({ history }) => {
           .createUserWithEmailAndPassword(email.value, password.value)
           .then(async response => {
             setSign({signed:true});
-            console.log("#", response);
+            //console.log("#", response);
             await axios
               .post("https://revcode.herokuapp.com/adduser", {
                 uid: response.user.uid,
@@ -72,7 +72,7 @@ const Register = ({ history }) => {
               })
               .then(res => {
                 setLoad({loading:false})
-                console.log(res);
+                //console.log(res);
                 
                 alert("Successfully Registered");
 
