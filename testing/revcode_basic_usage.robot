@@ -2,17 +2,21 @@
 Library    Selenium2Library
 Library    BuiltIn
 Library    String
-Suite Teardown     Close Browser
+Suite Teardown     Close All Browsers
 
 *** Variable ***
 ${url}                  https://wisticejent.github.io/RevCode/
 ${title}                RevCode  
-${signup_btn}           //button[contains(text(), "Sign Up")]
 
+${signup_btn}           //button[contains(text(), "Sign Up")]
+${login_btn}           //button[contains(text(), "Log In")]
+${login_submit_btn}           //button[contains(text(), "Login")]
 ${signup_user_field}        //*[@name="username"]
 ${signup_email_field}       //*[@name="email"]
 ${signup_pass_field}        //*[@name="password"]
 ${signup_con_pass_field}    //*[@name="cpassword"]
+${login_email_field}       //*[@name="email"]
+${login_pass_field}        //*[@name="password"]
 
 ${username_success}         system_testing_username
 ${email_success}            system_testing@revcode.com
@@ -45,35 +49,25 @@ Input Signup Info
     Input Text       ${signup_email_field}       ${email}
     Input Text       ${signup_pass_field}       ${password}
     Input Text       ${signup_con_pass_field}       ${cpassword}
-
-Input Username and Password
-    [Arguments]      ${xpath_user}       ${xpath_pass}     ${username}       ${password}
-    Element Should Be Visible    ${xpath_user}
-    Element Should Be Visible    ${xpath_pass}
-    Input Text       ${xpath_user}       ${username}
-    Input Text       ${xpath_pass}       ${password}
+Input Login Info
+    [Arguments]      ${email}    ${password}
+    Element Should Be Visible    ${login_email_field}
+    Element Should Be Visible    ${login_pass_field}
+    Input Text       ${login_email_field}       ${email}
+    Input Text       ${login_pass_field}       ${password}
 Click Button
     [Arguments]       ${btn}
     Wait Until Page Contains Element    ${btn}
     Click Element        ${btn}
-Verify Login Fail
-   [Arguments]                ${xpath}
-    Wait Until Page Contains Element        ${xpath}
-Verify Login Success
-    [Arguments]        ${xpath}
-    Wait Until Page Contains Element        ${xpath}
-Try To logout
-    Sleep   1
-    Wait Until Page Contains Element        ${user_nav}
-    Click Element                           ${user_nav}
-    Sleep   1
-    Wait Until Page Contains Element        ${btn_logout}
-    Click Element                           ${btn_logout}
-    Sleep   1
+Text Should Be Visible
+    [Arguments]       ${text}
+    Wait Until Page Contains Element    //*[contains(text(), "${text}")]
+    Element Should Be Visible           //*[contains(text(), "${text}")]
+
 
 *** Test Cases ***
 Signup - Success
-    [tags]    fail
+    [tags]  success
     Open Browser    about:blank    chrome
     Go To                                   ${url}
     Verify page title                       ${title}
@@ -83,15 +77,15 @@ Signup - Success
     Input Signup Info                       ${username_success}  ${email_success}  ${password_success}  ${password_success}
     Click Button                            ${signup_btn}
     Alert Should Be Present                 Successfully Registered
-    #Element Should Be Visible               ${input_pass}
-    #Element Should Be Visible               //*[contains(text(), "กรุณากรอกข้อมูลให้ครบ")]
-    #Input Text                              ${input_user}       ${username_fail}
-    #Click Button Login                      ${btn_login}
-    #Element Should Be Visible               //*[contains(text(), "กรุณากรอกข้อมูลให้ครบ")]
-    #Input Text                              ${input_pass}       pas
-    #Click Button Login                      ${btn_login}
-    #Element Should Be Visible               //*[contains(text(), "กรุณากรอกรหัสผ่านอย่างน้อย 6 - 8 ตัวอักษร")]
-    #Input Text                              ${input_pass}       password
-    #Click Button Login                      ${btn_login}
-    #Verify Login Fail                       ${txt_out}
-#
+
+Login - Success
+    [tags]  success
+    Open Browser    about:blank    chrome
+    Go To                                   ${url}
+    Verify page title                       ${title}
+    Maximize Browser Window
+    Element Should Be Visible               ${login_btn}
+    Click Button                            ${login_btn}
+    Input Login Info                        ${email_success}  ${password_success}
+    Click Button                            ${login_submit_btn}
+    Text Should Be Visible                  Files
