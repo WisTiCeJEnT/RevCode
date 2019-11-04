@@ -23,6 +23,10 @@ ${username_success}         system_testing_username
 ${email_success}            system_testing@revcode.com
 ${password_success}         system_testing_password
 
+${email_pa_success}            system_testing_pa@revcode.com
+${password_pa_success}         system_testing_pa
+
+
 ${input_pass}           //*[@name="password"]
 
 ${btn_login}            //*[@class="button-login btn-block py-2 ld-ext-right mt-4 btn btn-secondary"]
@@ -60,6 +64,10 @@ Click Button
     [Arguments]       ${btn}
     Wait Until Page Contains Element    ${btn}
     Click Element        ${btn}
+Click On Text
+    [Arguments]       ${text}
+    Wait Until Page Contains Element    //*[contains(text(), "${text}")]
+    Click Element                       //*[contains(text(), "${text}")]
 Text Should Be Visible
     [Arguments]       ${text}
     Wait Until Page Contains Element    //*[contains(text(), "${text}")]
@@ -117,3 +125,16 @@ Login - Success
     Input Login Info                        ${email_success}  ${password_success}
     Click Button                            ${login_submit_btn}
     Text Should Be Visible                  Files
+    
+Login - Wrong Password
+    [tags]  Fail
+    Open Browser    about:blank    chrome
+    Go To                                   ${url}
+    Verify page title                       ${title}
+    Maximize Browser Window
+    Element Should Be Visible               ${login_btn}
+    Click Button                            ${login_btn}
+    Input Login Info                        ${email_success}  Wrong_Password
+    Click Button                            ${login_submit_btn}
+    Text Should Be Visible                  The password is invalid or the user does not have a password.
+
