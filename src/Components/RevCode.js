@@ -45,10 +45,11 @@ export class RevCode extends Component {
     saveLoader: false,
     warning: true,
     ErrPos: "",
-    howtoFile: ""
+    howtoFile: "",
+    interTrim: "",
+    finalTran: false
   };
   finalTranscript = "";
-  prevState = "";
 
   initializeData = async callback => {
     this.setState({ fileLoader: true, fileId: "Default" });
@@ -275,60 +276,75 @@ export class RevCode extends Component {
 
   Record = () => {
     try {
-      this.setState({ pressed: !this.state.pressed }, () => {
-        if (
-          this.state.pressed &&
-          window.hasOwnProperty("webkitSpeechRecognition")
-        ) {
-          recognition.onresult = event => {
-            let interimTranscript = "";
-            for (
-              let i = event.resultIndex, len = event.results.length;
-              i < len;
-              i++
-            ) {
-              let transcript = event.results[i][0].transcript;
-              if (event.results[i].isFinal) {
-                this.setState({ fileLoader: true });
-                this.finalTranscript += transcript;
-                const data = {
-                  uid: this.state.userData.uid,
-                  file_id: this.state.fileId,
-                  indent: 0,
-                  line_no: 0,
-                  raw_text: this.finalTranscript
-                };
-
-                axios
-                  .post("https://revcode.herokuapp.com/speech", data)
-                  .then(res => {
-                    console.log("@", this.finalTranscript);
-                    console.log(res);
-                    this.finalTranscript = "";
-                    this.setState({
-                      code: this.state.code.concat("\n" + res.data.code),
-                      fileLoader: false
-                    });
-                  })
-                  .catch(error => {
-                    alert(error.message);
+      this.setState(
+        { pressed: !this.state.pressed, interTrim: "", finalTran: "" },
+        () => {
+          if (
+            this.state.pressed &&
+            window.hasOwnProperty("webkitSpeechRecognition")
+          ) {
+            recognition.onresult = event => {
+              let interimTranscript = "";
+              for (
+                let i = event.resultIndex, len = event.results.length;
+                i < len;
+                i++
+              ) {
+                let transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                  this.setState({ fileLoader: true });
+                  this.finalTranscript += transcript;
+                  this.setState({
+                    interTrim: this.finalTranscript,
+                    finalTran: true
                   });
-              } else {
-                interimTranscript += transcript;
-                console.log("#", interimTranscript);
-              }
-            }
+                  const data = {
+                    uid: this.state.userData.uid,
+                    file_id: this.state.fileId,
+                    indent: 0,
+                    line_no: 0,
+                    raw_text: this.finalTranscript
+                  };
 
-            // this.setState({ text:this.finalTranscript+interimTranscript},()=>{
-            //   this.setState({code:this.state.code.concat("\n"+"#"+this.state.text)})
-            // });
-          };
-          recognition.start();
-        } else {
-          recognition.stop();
+                  axios
+                    .post("https://revcode.herokuapp.com/speech", data)
+                    .then(res => {
+                      console.log(res);
+                      this.finalTranscript = "";
+                      let tmp = this.state.code;
+                      if (tmp !== "") tmp += "\n";
+                      tmp += res.data.code;
+                      this.setState({
+                        code: tmp,
+                        fileLoader: false
+                      });
+                    })
+                    .catch(error => {
+                      alert(error.message);
+                    });
+                } else {
+                  interimTranscript += transcript;
+                  this.setState({
+                    interTrim: interimTranscript,
+                    finalTran: false
+                  });
+                  console.log("#", interimTranscript);
+                }
+              }
+
+              // this.setState({ text:this.finalTranscript+interimTranscript},()=>{
+              //   this.setState({code:this.state.code.concat("\n"+"#"+this.state.text)})
+              // });
+            };
+            recognition.start();
+          } else {
+            recognition.stop();
+            console.log("error");
+          }
         }
-      });
+      );
     } catch {
+      console.log("error");
       this.setState({ pressed: !this.state.pressed });
     }
   };
@@ -336,8 +352,7 @@ export class RevCode extends Component {
   messageCheck = () => {
     if (this.state.ErrPos === "Err") return "Choose your file!";
     else if (this.state.ErrPos === "Pos") return "Successfully saved";
-    else if (this.state.ErrPos === "Init")
-      return "Cannot delete this file!";
+    else if (this.state.ErrPos === "Init") return "Cannot delete this file!";
   };
 
   render() {
@@ -409,7 +424,22 @@ export class RevCode extends Component {
                       circular
                       icon
                       color="red"
-                      onClick={this.Record}
+                      onClick={() => {
+                        if (this.state.fileId !== "") this.Record();
+                        else {
+                          this.setState(
+                            { warning: false, ErrPos: "Err" },
+                            () => {
+                              setTimeout(() => {
+                                this.setState({
+                                  warning: true,
+                                  ErrPos: ""
+                                });
+                              }, 2000);
+                            }
+                          );
+                        }
+                      }}
                       inverted={!this.state.pressed}
                       className={this.state.pressed ? "Rec" : null}
                     >
@@ -418,6 +448,26 @@ export class RevCode extends Component {
                         size="big"
                       />
                     </Button>
+                  </Container>
+                  <Container style={{ marginTop: "2em" }}>
+                    <Message
+                      color={this.state.finalTran ? "green" : "blue"}
+                      hidden={!this.state.pressed}
+                    >
+                      <Message.Header>
+                        Speech{" "}
+                        {!this.state.finalTran ? (
+                          <span>
+                            <Icon name="spinner" loading />
+                          </span>
+                        ) : (
+                          <span>
+                            <Icon name="check circle" color="green" />
+                          </span>
+                        )}
+                      </Message.Header>
+                      <p>{this.state.interTrim}</p>
+                    </Message>
                   </Container>
                 </Grid.Row>
                 <Grid.Row style={{ height: "6%" }}>
@@ -531,9 +581,14 @@ export class RevCode extends Component {
                         <Button
                           icon
                           onClick={() => {
-                            if (this.state.fileId !== "" && this.state.fileId!==this.state.howtoFile)
+                            if (
+                              this.state.fileId !== "" &&
+                              this.state.fileId !== this.state.howtoFile
+                            )
                               this.setState({ modalOpen: true });
-                            else if (this.state.fileId===this.state.howtoFile) {
+                            else if (
+                              this.state.fileId === this.state.howtoFile
+                            ) {
                               this.setState(
                                 { warning: false, ErrPos: "Init" },
                                 () => {
