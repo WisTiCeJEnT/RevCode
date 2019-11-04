@@ -68,7 +68,7 @@ const Register = ({ history }) => {
               .post("https://revcode.herokuapp.com/adduser", {
                 uid: response.user.uid,
                 name: username.value,
-                email: email.values
+                email: email.value
               })
               .then(res => {
                 setLoad({loading:false})
