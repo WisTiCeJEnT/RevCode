@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/RevCode/static/css/main.d4449b00.chunk.css",
+    "main.js": "/RevCode/static/js/main.da1b9173.chunk.js",
+    "main.js.map": "/RevCode/static/js/main.da1b9173.chunk.js.map",
+    "runtime-main.js": "/RevCode/static/js/runtime-main.df8512ae.js",
+    "runtime-main.js.map": "/RevCode/static/js/runtime-main.df8512ae.js.map",
+    "static/js/2.b018fe88.chunk.js": "/RevCode/static/js/2.b018fe88.chunk.js",
+    "static/js/2.b018fe88.chunk.js.map": "/RevCode/static/js/2.b018fe88.chunk.js.map",
+    "index.html": "/RevCode/index.html",
+    "precache-manifest.5daa8f544b8e840284681a0e0df08572.js": "/RevCode/precache-manifest.5daa8f544b8e840284681a0e0df08572.js",
+    "service-worker.js": "/RevCode/service-worker.js",
+    "static/css/main.d4449b00.chunk.css.map": "/RevCode/static/css/main.d4449b00.chunk.css.map"
+  }
+}
