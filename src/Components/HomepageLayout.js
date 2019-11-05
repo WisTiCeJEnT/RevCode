@@ -147,7 +147,9 @@ class DesktopContainer extends Component {
                 </Menu.Item>
                 <Menu.Item position="right">
                   <Link to="/login">
-                    <Button inverted color="teal">Log In</Button>
+                    <Button inverted color="teal">
+                      Log In
+                    </Button>
                   </Link>
                   <Link to="/register">
                     <Button
@@ -271,95 +273,80 @@ const HomepageLayout = () => {
           <Grid.Row>
             <Grid.Column width={8}>
               <Header as="h2" style={{ fontSize: "2em" }} id="about">
-                Why RevCode?
+                What's RevCode ?
               </Header>
               <p style={{ fontSize: "1.33em" }}>
-                We can give your company superpowers to do things that they
-                never thought possible. Let us delight your customers and
-                empower your needs... through pure data analytics.
+                <b>RevCode</b> <i>Revolution of Coding </i> is a tool that
+                provides you the speech to code feature. No matter where you
+                are, you still manage to code with your voice anywhere.
               </p>
               <Header as="h3" style={{ fontSize: "2em" }}>
-                We Make Bananas That Can Dance
+                Why RevCode ?
               </Header>
               <p style={{ fontSize: "1.33em" }}>
-                Yes that's right, you thought it was the stuff of dreams, but
-                even bananas can be bioengineered.
+                Are you bored of ordinary ways of coding ? Imagine you can code
+                from anywhere with your own voice, Revcode is what you're
+                looking for.
               </p>
             </Grid.Column>
             <Grid.Column floated="right" width={6}>
               <Image
-                bordered
-                rounded
-                size="large"
-                src="/images/wireframe/white-image.png"
+                fluid
+                src="https://cdn.dribbble.com/users/99287/screenshots/3839839/work_work_work.gif"
               />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column textAlign="center">
-              <Button size="huge">Check Them Out</Button>
+              <Link to="/register">
+                <Button color="teal" size="huge">
+                  Try It Now
+                </Button>
+              </Link>
             </Grid.Column>
           </Grid.Row>
         </Grid>
       </Segment>
-      <Segment style={{ padding: "0em" }} vertical id="feature">
-        <Grid celled="internally" columns="equal" stackable>
-          <Grid.Row textAlign="center">
-            <Grid.Column style={{ paddingBottom: "5em", paddingTop: "5em" }}>
-              <Header as="h3" style={{ fontSize: "2em" }}>
-                "What a Company"
-              </Header>
-              <p style={{ fontSize: "1.33em" }}>
-                That is what they all say about us
-              </p>
+
+      <Segment style={{ padding: "4em 0em" }} vertical id="feature">
+        <Grid container stackable verticalAlign="middle">
+          <Grid.Row>
+            <Grid.Column width={6}>
+              <Image
+                fluid
+                src="https://cdn.dribbble.com/users/320114/screenshots/2575134/code_dribbble.gif"
+              />
             </Grid.Column>
-            <Grid.Column style={{ paddingBottom: "5em", paddingTop: "5em" }}>
-              <Header as="h3" style={{ fontSize: "2em" }}>
-                "I shouldn't have gone with their competitor."
+            <Grid.Column floated="right" width={8}>
+              <Header as="h2" style={{ fontSize: "2em" }} id="about">
+                Speech To Code
               </Header>
               <p style={{ fontSize: "1.33em" }}>
-                <Image avatar src="/images/avatar/large/nan.jpg" />
-                <b>Nan</b> Chief Fun Officer Acme Toys
+                <b>RevCode</b> <i>Revolution of Coding </i> is a tool that
+                provides you the speech to code feature. No matter where you
+                are, you still manage to code with your voice anywhere.
               </p>
             </Grid.Column>
           </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={8}>
+              <Header as="h2" style={{ fontSize: "2em" }} id="about">
+                File Management
+              </Header>
+              <p style={{ fontSize: "1.33em" }}>
+                <b>RevCode</b> <i>Revolution of Coding </i> is a tool that
+                provides you the speech to code feature. No matter where you
+                are, you still manage to code with your voice anywhere.
+              </p>
+            </Grid.Column>
+            <Grid.Column floated="right" width={6}>
+              <Image
+                size="medium"
+                src="https://cdn.dribbble.com/users/183024/screenshots/1945172/folder.gif"
+              />
+            </Grid.Column>
+          </Grid.Row>
         </Grid>
-      </Segment>
-      <Segment style={{ padding: "8em 0em" }} vertical>
-        <Container text>
-          <Header as="h3" style={{ fontSize: "2em" }}>
-            Breaking The Grid, Grabs Your Attention
-          </Header>
-          <p style={{ fontSize: "1.33em" }}>
-            Instead of focusing on content creation and hard work, we have
-            learned how to master the art of doing nothing by providing massive
-            amounts of whitespace and generic content that can seem massive,
-            monolithic and worth your attention.
-          </p>
-          <Button as="a" size="large">
-            Read More
-          </Button>
-          <Divider
-            as="h4"
-            className="header"
-            horizontal
-            style={{ margin: "3em 0em", textTransform: "uppercase" }}
-          >
-            Case Studies
-          </Divider>
-          <Header as="h3" style={{ fontSize: "2em" }}>
-            Did We Tell You About Our Bananas?
-          </Header>
-          <p style={{ fontSize: "1.33em" }}>
-            Yes I know you probably disregarded the earlier boasts as
-            non-sequitur filler content, but it's really true. It took years of
-            gene splicing and combinatory DNA research, but our bananas can
-            really dance.
-          </p>
-          <Button as="a" size="large">
-            I'm Still Quite Interested
-          </Button>
-        </Container>
       </Segment>
       <Segment inverted vertical style={{ padding: "5em 0em" }} id="contact">
         <Container>
