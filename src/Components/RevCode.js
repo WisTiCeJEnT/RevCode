@@ -328,7 +328,7 @@ export class RevCode extends Component {
                     interTrim: interimTranscript,
                     finalTran: false
                   });
-                  console.log("#", interimTranscript);
+                  //console.log("#", interimTranscript);
                 }
               }
 
