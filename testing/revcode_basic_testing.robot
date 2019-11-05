@@ -2,7 +2,7 @@
 Library    Selenium2Library
 Library    BuiltIn
 Library    String
-Test Teardown    Close Browser
+Library    pyautogui
 Suite Teardown     Close All Browsers
 
 *** Variable ***
@@ -75,46 +75,7 @@ Text Should Be Visible
 
 
 *** Test Cases ***
-Signup - Bad Password
-    [tags]  Fail
-    Open Browser    about:blank    chrome
-    Go To                                   ${url}
-    Verify page title                       ${title}
-    Maximize Browser Window
-    Element Should Be Visible               ${signup_btn}
-    Click Button                            ${signup_btn}
-    Input Signup Info                       ${username_success}  ${email_success}  "pass"  "pas"
-    Click Button                            ${signup_btn}
-    Text Should Be Visible                  Your password and confirm password don't match
-    Input Signup Info                       ${username_success}  ${email_success}  "pas"  "pas"
-    Click Button                            ${signup_btn}
-    Text Should Be Visible                  Password should be at least 6 characters
-
-Signup - Success
-    [tags]  Success
-    Open Browser    about:blank    chrome
-    Go To                                   ${url}
-    Verify page title                       ${title}
-    Maximize Browser Window
-    Element Should Be Visible               ${signup_btn}
-    Click Button                            ${signup_btn}
-    Input Signup Info                       ${username_success}  ${email_success}  ${password_success}  ${password_success}
-    Click Button                            ${signup_btn}
-    Alert Should Be Present                 Successfully Registered
-
-Signup - Used Email
-    [tags]  Fail
-    Open Browser    about:blank    chrome
-    Go To                                   ${url}
-    Verify page title                       ${title}
-    Maximize Browser Window
-    Element Should Be Visible               ${signup_btn}
-    Click Button                            ${signup_btn}
-    Input Signup Info                       ${username_success}  ${email_success}  ${password_success}  ${password_success}
-    Click Button                            ${signup_btn}
-    Text Should Be Visible                  The email address is already in use by another account.
-
-Login - Success
+Files Management - Login
     [tags]  Success
     Open Browser    about:blank    chrome
     Go To                                   ${url}
@@ -122,19 +83,43 @@ Login - Success
     Maximize Browser Window
     Element Should Be Visible               ${login_btn}
     Click Button                            ${login_btn}
-    Input Login Info                        ${email_success}  ${password_success}
+    Input Login Info                        ${email_pa_success}  ${password_pa_success}
     Click Button                            ${login_submit_btn}
     Text Should Be Visible                  Files
-    
-Login - Wrong Password
-    [tags]  Fail
-    Open Browser    about:blank    chrome
-    Go To                                   ${url}
-    Verify page title                       ${title}
-    Maximize Browser Window
-    Element Should Be Visible               ${login_btn}
-    Click Button                            ${login_btn}
-    Input Login Info                        ${email_success}  Wrong_Password
-    Click Button                            ${login_submit_btn}
-    Text Should Be Visible                  The password is invalid or the user does not have a password.
+    Click On Text                           HowTo.txt
 
+Files Management - Select File
+    [tags]  Success
+    Click On Text                           HowTo.txt
+    Text Should Be Visible                  \### Enjoy Coding ###
+
+Files Management - Add File
+    [tags]  Success
+    Click Button                            //*[@class="add icon"] 
+    Text Should Be Visible                  Add New File
+    Input Text                              //*[@placeholder="File name..."]       test_add_file
+    Click Button                            //*[@class="ui green button"] 
+    Text Should Be Visible                  test_add_file.py
+    
+Files Management - Edit & Save File
+    [tags]  Success
+    Click On Text                           Edit your code here
+    BuiltIn.Sleep                           1
+    pyautogui.typewrite                     print('Revcode
+    Click On Text                           Save
+    Text Should Be Visible                  Successfully saved
+    Click On Text                           HowTo.txt
+    Click On Text                           test_add_file.py
+    BuiltIn.Sleep                           2
+    #Text Should Be Visible                  print('Revcode')
+
+Files Management - Remove File
+    [tags]  Success
+    Click On Text                           test_add_file.py
+    Click Button                            //*[@class="minus icon"] 
+    Text Should Be Visible                  Do you want to delete
+    Click On Text                           Yes
+    BuiltIn.Sleep                           1
+    Text Should Be Visible                  Files
+    BuiltIn.Sleep                           1
+    Element Should Not Be Visible           //*[contains(text(), "test_add_file.py")]
