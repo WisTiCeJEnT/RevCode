@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { Component, useContext } from "react";
 import { Link } from "react-router-dom";
+import { Link as ScrollTo, animateScroll as scroll } from "react-scroll";
 import {
   Button,
   Container,
@@ -51,18 +52,19 @@ const HomepageHeading = ({ mobile }) => (
         <b>{"<>"}</b> Speak your code <b>{"</>"}</b>
       </Header.Content>
     </Header>
-
-    <Button
-      color="teal"
-      inverted
-      size="huge"
-      style={{
-        marginTop: mobile ? "0.5em" : "1.5em"
-      }}
-    >
-      Get Started
-      <Icon name="right arrow" />
-    </Button>
+    <ScrollTo to="about" smooth={true} offset={-100} duration={500}>
+      <Button
+        color="teal"
+        inverted
+        size="huge"
+        style={{
+          marginTop: mobile ? "0.5em" : "1.5em"
+        }}
+      >
+        Get Started
+        <Icon name="right arrow" />
+      </Button>
+    </ScrollTo>
   </Container>
 );
 
@@ -95,26 +97,62 @@ class DesktopContainer extends Component {
           >
             <Menu
               fixed={fixed ? "top" : null}
-              inverted={!fixed}
+              inverted
               pointing={!fixed}
               secondary={!fixed}
               size="large"
+              borderless
             >
               <Container>
-                <Menu.Item as="a" active>
+                <Menu.Item
+                  as="a"
+                  active={!fixed}
+                  onClick={() => {
+                    scroll.scrollToTop();
+                  }}
+                >
                   Home
                 </Menu.Item>
-                <Menu.Item as="a">###</Menu.Item>
-                <Menu.Item as="a">###</Menu.Item>
-                <Menu.Item as="a">###</Menu.Item>
+
+                <Menu.Item link>
+                  <ScrollTo
+                    to="about"
+                    smooth={true}
+                    offset={-100}
+                    duration={500}
+                  >
+                    About
+                  </ScrollTo>
+                </Menu.Item>
+
+                <Menu.Item link>
+                  <ScrollTo
+                    to="feature"
+                    smooth={true}
+                    offset={-70}
+                    duration={500}
+                  >
+                    Feature
+                  </ScrollTo>
+                </Menu.Item>
+                <Menu.Item link>
+                  <ScrollTo
+                    to="contact"
+                    smooth={true}
+                    offset={-70}
+                    duration={500}
+                  >
+                    Contact
+                  </ScrollTo>
+                </Menu.Item>
                 <Menu.Item position="right">
                   <Link to="/login">
-                    <Button inverted={!fixed}>Log In</Button>
+                    <Button inverted color="teal">Log In</Button>
                   </Link>
                   <Link to="/register">
                     <Button
-                      inverted={!fixed}
-                      primary={fixed}
+                      inverted
+                      color="teal"
                       style={{ marginLeft: "0.5em" }}
                     >
                       Sign Up
@@ -165,11 +203,9 @@ class MobileContainer extends Component {
           <Menu.Item as="a" active>
             Home
           </Menu.Item>
-          <Menu.Item as="a">####</Menu.Item>
-          <Menu.Item as="a">####</Menu.Item>
-          <Menu.Item as="a">####</Menu.Item>
-          <Menu.Item as="a">####</Menu.Item>
-          <Menu.Item as="a">####</Menu.Item>
+          <Menu.Item as="a">About</Menu.Item>
+          <Menu.Item as="a">Feature</Menu.Item>
+          <Menu.Item as="a">Contact</Menu.Item>
         </Sidebar>
 
         <Sidebar.Pusher dimmed={sidebarOpened}>
@@ -234,7 +270,7 @@ const HomepageLayout = () => {
         <Grid container stackable verticalAlign="middle">
           <Grid.Row>
             <Grid.Column width={8}>
-              <Header as="h2" style={{ fontSize: "2em" }}>
+              <Header as="h2" style={{ fontSize: "2em" }} id="about">
                 Why RevCode?
               </Header>
               <p style={{ fontSize: "1.33em" }}>
@@ -266,7 +302,7 @@ const HomepageLayout = () => {
           </Grid.Row>
         </Grid>
       </Segment>
-      <Segment style={{ padding: "0em" }} vertical>
+      <Segment style={{ padding: "0em" }} vertical id="feature">
         <Grid celled="internally" columns="equal" stackable>
           <Grid.Row textAlign="center">
             <Grid.Column style={{ paddingBottom: "5em", paddingTop: "5em" }}>
@@ -309,7 +345,7 @@ const HomepageLayout = () => {
             horizontal
             style={{ margin: "3em 0em", textTransform: "uppercase" }}
           >
-            <a href="#">Case Studies</a>
+            Case Studies
           </Divider>
           <Header as="h3" style={{ fontSize: "2em" }}>
             Did We Tell You About Our Bananas?
@@ -325,7 +361,7 @@ const HomepageLayout = () => {
           </Button>
         </Container>
       </Segment>
-      <Segment inverted vertical style={{ padding: "5em 0em" }}>
+      <Segment inverted vertical style={{ padding: "5em 0em" }} id="contact">
         <Container>
           <Grid divided inverted stackable>
             <Grid.Row>

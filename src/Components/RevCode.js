@@ -312,7 +312,7 @@ export class RevCode extends Component {
                       console.log(res);
                       this.finalTranscript = "";
                       let tmp = this.state.code;
-                      if (tmp !== "") tmp += "\n";
+                      if (tmp !== "" && res.data.code !== "" && res.data.code) tmp += "\n";
                       tmp += res.data.code;
                       this.setState({
                         code: tmp,
