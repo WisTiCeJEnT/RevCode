@@ -15,7 +15,6 @@ import {
   Sidebar,
   Visibility,
   Image,
-  Divider
 } from "semantic-ui-react";
 import { AuthContext } from "./../Auth";
 import { Redirect } from "react-router";
@@ -323,7 +322,8 @@ const HomepageLayout = () => {
               </Header>
               <p style={{ fontSize: "1.33em" }}>
                 <b>RevCode</b> will preprocess your voice then generate it into
-                real codes. Whenever you don't want to code by typing, just turn this feature on and enjoy coding.
+                real codes. Whenever you don't want to code by typing, just turn
+                this feature on and enjoy coding.
               </p>
             </Grid.Column>
           </Grid.Row>
@@ -351,31 +351,38 @@ const HomepageLayout = () => {
           <Grid divided inverted stackable>
             <Grid.Row>
               <Grid.Column width={3}>
-                <Header inverted as="h4" content="About" />
+                <Header inverted as="h4" content="Contact Us" />
                 <List link inverted>
-                  <List.Item as="a">Sitemap</List.Item>
-                  <List.Item as="a">Contact Us</List.Item>
-                  <List.Item as="a">Religious Ceremonies</List.Item>
-                  <List.Item as="a">Gazebo Plans</List.Item>
-                </List>
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <Header inverted as="h4" content="Services" />
-                <List link inverted>
-                  <List.Item as="a">Banana Pre-Order</List.Item>
-                  <List.Item as="a">DNA FAQ</List.Item>
-                  <List.Item as="a">How To Access</List.Item>
-                  <List.Item as="a">Favorite X-Men</List.Item>
+                  <List.Item>
+                    <List.Icon name="github" />
+                    <List.Content>
+                      <a href="https://github.com/WisTiCeJEnT/RevCode">
+                        GitHub
+                      </a>
+                    </List.Content>
+                  </List.Item>
                 </List>
               </Grid.Column>
               <Grid.Column width={7}>
                 <Header as="h4" inverted>
-                  Footer Header
+                  About
                 </Header>
-                <p>
-                  Extra space for a call to action inside the footer that could
-                  help re-engage users.
-                </p>
+                <List link inverted>
+                  <List.Item>
+                    
+                    <List.Content as="a">
+                      RevCode is project based on 01204341 Software Engineering
+                    </List.Content>
+                  </List.Item>
+                  <List.Item >
+                    
+                    <List.Content as="a">
+                    Kasetsart University
+                    </List.Content>
+                  </List.Item>
+                </List>
+                
+  
               </Grid.Column>
             </Grid.Row>
           </Grid>
