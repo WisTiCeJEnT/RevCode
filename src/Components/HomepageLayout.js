@@ -322,9 +322,8 @@ const HomepageLayout = () => {
                 Speech To Code
               </Header>
               <p style={{ fontSize: "1.33em" }}>
-                <b>RevCode</b> <i>Revolution of Coding </i> is a tool that
-                provides you the speech to code feature. No matter where you
-                are, you still manage to code with your voice anywhere.
+                <b>RevCode</b> will preprocess your voice then generate it into
+                real codes. Whenever you don't want to code by typing, just turn this feature on and enjoy coding.
               </p>
             </Grid.Column>
           </Grid.Row>
@@ -334,9 +333,8 @@ const HomepageLayout = () => {
                 File Management
               </Header>
               <p style={{ fontSize: "1.33em" }}>
-                <b>RevCode</b> <i>Revolution of Coding </i> is a tool that
-                provides you the speech to code feature. No matter where you
-                are, you still manage to code with your voice anywhere.
+                <b>RevCode</b> provides a file management system which keeps
+                your file online and updated.
               </p>
             </Grid.Column>
             <Grid.Column floated="right" width={6}>
