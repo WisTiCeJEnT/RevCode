@@ -1,68 +1,49 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Welcome to the RevCode wiki!
+<br>
+    <b>RevCode</b>   คือสิ่งที่จะมาปฏิวัติวิธีการเขียนโปรแกรมของทุกคนตลอดไป เพราะเราจะเปลี่ยนอิริยาบถของคุณให้เป็นสุดยอดโค้ด นั่นหมายความว่า ไม่ว่าคุณจะทำอะไรอยู่ กินข้าว เดินทางไปทำงาน หรือแม้แต่กำลังละเมอ คุณก็สามารถโค้ดด้วยคำพูดของคุณได้
 
-## Available Scripts
 
-In the project directory, you can run:
+* Speech to text
+  * รองรับภาษาไทย,ภาษาถิ่น,ภาษาอังกฤษ,และอื่นๆ
+    * รับ input เสียง
+    * preprocess raw radio ( streaming )
+    * translate audio to text
 
-### `npm start`
+* Platform
+  * รับเสียงแบบ Real-time
+    * ขอ permission ของ platform
+    * ทำหน้าต่างควบคุม
+  * แสดงผลการคำนวณ
+    * แสดง syntax ของภาษา
+    * แก้คำได้ + learning
+  * เมนูควบคุม ( Navigation )
+    * เลือกวิธีการ
+    * ภาษาที่รับ
+    * ภาษาที่แปลง
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* Text to code
+  * เปลี่ยน text ให้เป็น pseudocode
+    * preprocess
+    * match คำพูดเป็นคำเขียน
+    * จัดเรียง grammar ของ pseudocode
+    * translate text to code 
+  * เปลี่ยน pseudocode ให้เป็นภาษาที่ต้องการ
+    * เปรียบเทียบ pseudocode กับคำสั่งในภาษานั้น ๆ 
+  * จัด syntax ตามภาษาแต่ละภาษา
+    * จัดเรียงคำสั่งที่ได้ให้เข้ากับรูปแบบของแต่ละภาษา
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+#### โครงงานนี้เป้นส่วนหนึ่งของรายวิชา Software Engineering (01204341) ภาคต้น ปีการศึกษา 2562 
+## Department of Computer Engineering - Kasetsart University
 
-### `npm test`
+### Our Team
+ลำดับที่ | ชื่อ-นามสกุล |  รหัสนิสิต 
+:---:|---|:------:
+1|นาย วรรธนัย สาธุพันธ์|6010500117
+2|นาย ธันยา ตันศรีประภาศิริ|6010500389
+3|นาย อัฐพงศ์ สมบูรณ์วรากร|6010500401
+4|นาย ธนากร ปรางค์ศรีอรุณ|6010502578
+5|นาย ฌานณโชตน์ บุญเขียว|6010504694
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
